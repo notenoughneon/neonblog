@@ -154,8 +154,8 @@ foreach ($mentions as $mention) {
     }
 }
 
-//if (!ftruncate($fh, 0))
-//    echo "Failed to clear queue\n";
+if (!ftruncate($fh, 0))
+    echo "Failed to clear queue\n";
 
 finally:
 flock($fh, LOCK_UN);
