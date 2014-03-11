@@ -67,6 +67,7 @@ function insertReply($file, $reply) {
         //authorPhoto
         if ($reply["authorPhoto"] != null) {
             $img = appendElement($hcard, "img");
+            $img->setAttribute("class", "u-photo");
             $img->setAttribute("src", $reply["authorPhoto"]);
         }
     }
