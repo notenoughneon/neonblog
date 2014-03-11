@@ -1,5 +1,4 @@
 <?
-
 function appendElement($parent, $tag) {
     $elt = new DOMElement($tag);
     $parent->appendChild($elt);
@@ -12,24 +11,20 @@ function appendText($parent, $text) {
     return $elt;
 }
 
+    $file = "test.html";
+
     $doc = new DOMDocument();
-    $doc->loadHTML(file_get_contents("p/1-first-post.html"));
+    if (!$doc->loadHTMLFile($file)) {
+        echo "Failed to open $file\n";
+        return false;
+    }
     $xpath = new DOMXPath($doc);
     $hentry = $xpath->query("//*[@class='h-entry']")->item(0);
 
     $hcite = appendElement($hentry, "div");
     $hcite->setAttribute("class", "h-cite");
 
-    //authorName, authorUrl
-    $hcard = appendElement($hcite, "a");
-    $hcard->setAttribute("class", "p-author h-card");
-    $hcard->setAttribute("href", "http://foo.bar");
-    appendText($hcard, "Foo Bar");
+    if (!$doc->saveHTMLFile($file))
+        echo "Failed to save data to $file\n";
 
-    //authorPhoto
-    $img = appendElement($hcard, "img");
-    $img->setAttribute("src", "http://foo.bar/foo.jpg");
-
-    $doc->normalizeDocument();
-    $doc->saveHTMLFile("test.html");
 ?>

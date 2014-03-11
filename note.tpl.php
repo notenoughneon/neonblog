@@ -10,7 +10,7 @@
             </div><!-- /.blog-post -->
 
             <? foreach ($replies as $reply) {
-                if ($reply["type"] == "reply")
+                if (isset($reply["in-reply-to"]))
                     include("reply.tpl.php");
                 else
                     include("mention.tpl.php");

@@ -39,6 +39,13 @@ function chopPrefix($h, $n) {
     return $h;
 }
 
+function truncate($s, $n) {
+    if ($n > strlen($s)) {
+        return substr($s, 0, $n) . "...";
+    }
+    return $s;
+}
+
 function mftype($parsed, $type) {
     return array_filter($parsed["items"], function($elt) use ($type) {
         return in_array($type, $elt["type"]);
@@ -106,6 +113,7 @@ function getPost($mf) {
         "contentHtml" => mfpath($e, "content/html/1"),
         "contentValue" => mfpath($e, "content/value/1"),
         "url" => mfpath($e, "url/1"),
+        "in-reply-to" => mfpath($e, "in-reply-to/1"),
     );
     $post["type"] = ($post["name"] === $post["contentValue"]) 
         ? "note" : "article";
@@ -123,7 +131,7 @@ function getReplies($mf) {
             "published" => mfpath($r, "published/1"),
             "contentValue" => mfpath($r, "content/value/1"),
             "url" => mfpath($r, "url/1"),
-            "type" => count(mfpath($r, "author")) ? "reply" : "mention"
+            "in-reply-to" => mfpath($r, "in-reply-to/1"),
         );
     }
     return $replies;

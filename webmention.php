@@ -2,7 +2,7 @@
 require("common.php");
 
 function isTargetValid($cfg, $target) {
-    return array_key_exists(urlToLocal($target), generatePostIndex($cfg));
+    return array_key_exists(urlToLocal($cfg, $target), generatePostIndex($cfg));
 }
 
 if (!isset($_REQUEST["source"]))

@@ -1,7 +1,4 @@
 <?php
-echo "processqueue";
-die();
-
 require("common.php");
 require("Mf2/Parser.php");
 
@@ -13,6 +10,16 @@ function linksTo($html, $url) {
         if ($a->getAttribute("href") == $url)
             return true;
     }
+    return false;
+}
+
+function isReplyTo($html, $url) {
+    $mf = Mf2\Parse($html);
+    if (isset($mf["rels"]["in-reply-to"])
+        && in_array($url, $mf["rels"]["in-reply-to"]))
+        return true;
+    if (in_array($url, mfpath(mftype($mf, "h-entry"), "in-reply-to/url")))
+        return true;
     return false;
 }
 
@@ -28,9 +35,9 @@ function appendText($parent, $text) {
     return $elt;
 }
 
-function insertReply($file, $source, $post) {
+function insertReply($file, $reply) {
     $doc = new DOMDocument();
-    if (!$doc->loadHTML($file)) {
+    if (!$doc->loadHTMLFile($file)) {
         echo "Failed to open $file\n";
         return false;
     }
@@ -40,40 +47,47 @@ function insertReply($file, $source, $post) {
     $hcite = appendElement($hentry, "div");
     $hcite->setAttribute("class", "h-cite");
 
+    //reply-to
+    if (isset($reply["in-reply-to"])) {
+        $replyto = appendElement($hcite, "a");
+        $replyto->setAttribute("class", "u-in-reply-to");
+        $replyto->setAttribute("href", $reply["in-reply-to"]);
+    }
+
     //authorName, authorUrl
-    if ($post["authorName"] != null) {
+    if ($reply["authorName"] != null) {
         $hcard = appendElement($hcite, "div");
         $hcard->setAttribute("class", "p-author h-card");
-        appendText($hcard, $post["authorName"]);
+        appendText($hcard, $reply["authorName"]);
         //authorUrl
-        if ($post["authorUrl"] != null) {
+        if ($reply["authorUrl"] != null) {
             $authorurl = appendElement($hcard, "a");
-            $authorurl->setAttribute("href", $post["authorUrl"]);
+            $authorurl->setAttribute("href", $reply["authorUrl"]);
         }
         //authorPhoto
-        if ($post["authorPhoto"] != null) {
+        if ($reply["authorPhoto"] != null) {
             $img = appendElement($hcard, "img");
-            $img->setAttribute("src", $post["authorPhoto"]);
+            $img->setAttribute("src", $reply["authorPhoto"]);
         }
     }
 
     //published
-    if ($post["published"] != null) {
+    if ($reply["published"] != null) {
         $time = appendElement($hcite, "time");
         $time->setAttribute("class", "dt-published");
-        $time->setAttribute("datetime", $post["published"]);
+        $time->setAttribute("datetime", $reply["published"]);
     }
 
     //url
     $url = appendElement($hcite, "a");
     $url->setAttribute("class", "u-url");
-    $url->setAttribute("href", $source);
+    $url->setAttribute("href", $reply["url"]);
 
     //content
-    if ($post["contentValue"] != null) {
+    if ($reply["contentValue"] != null) {
         $content = appendElement($hcite, "div");
         $content->setAttribute("class", "e-content");
-        appendText($content, $post["contentValue"]);
+        appendText($content, $reply["contentValue"]);
     }
 
     if (!$doc->saveHTMLFile($file))
@@ -99,7 +113,7 @@ while (false != ($mention = fgets($fh))) {
             echo "Malformed entry: $mention\n";
             goto finally;
         }
-        $mentions[] = $parts;
+        $mentions[] = array_map("trim", $parts);
     }
 }
 foreach ($mentions as $mention) {
@@ -122,17 +136,25 @@ foreach ($mentions as $mention) {
         echo "bad mimetype: $mimetype\n";
         continue;
     }
-    if (!linksTo($page, $target)) {
-        echo "no link to target found\n";
-        continue;
+    if (linksTo($page, $target)) {
+        echo "found link to target\n";
+        $mf = Mf2\Parse($page, $source);
+        $reply = getPost($mf);
+        if (isReplyTo($page, $target)) {
+            echo "found in-reply-to target\n";
+            $reply["in-reply-to"] = $target;
+        } else {
+            unset($reply["in-reply-to"]);
+        }
+        insertReply($postIndex[urlToLocal($config, $target)], $reply);
     }
-    $mf = Mf2\Parse($page, $source);
-    $reply = getPost($mf);
-    insertReply($postIndex[urlToLocal($config, $target)], $source, $reply);
+    else {
+        echo "no link to target found\n";
+    }
 }
 
-if (!ftruncate($fh, 0))
-    echo "Failed to clear queue\n";
+//if (!ftruncate($fh, 0))
+//    echo "Failed to clear queue\n";
 
 finally:
 flock($fh, LOCK_UN);
