@@ -66,7 +66,6 @@
     </div><!-- /.container -->
 
     <div class="blog-footer">
-        <? echo "Page generated in ". $elapsedMs . "ms" ?>
     </div>
 
 

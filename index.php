@@ -11,7 +11,6 @@ if (isset($_GET["p"])) {
     $mf2 = Mf2\parse(file_get_contents($postIndex[$p]), $config["siteUrl"]);
     $post = getPost($mf2);
     $replies = getReplies($mf2);
-    $elapsedMs = round((microtime(true) - $tStart) * 1000);
     require("post.tpl.php");
     exit();
 } else {
@@ -28,7 +27,6 @@ if (isset($_GET["p"])) {
     else $prevUrl = "?o=" . ($o + $l) . "&l=" . $l;
     if ($o <= 0) $nextUrl = null;
     else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l;
-    $elapsedMs = round((microtime(true) - $tStart) * 1000);
     require("index.tpl.php");
     exit();
 }
