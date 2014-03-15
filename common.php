@@ -39,7 +39,7 @@ function chopPrefix($h, $n) {
 }
 
 function truncate($s, $n) {
-    if ($n > strlen($s)) {
+    if (strlen($s) > $n) {
         return substr($s, 0, $n) . "...";
     }
     return $s;
