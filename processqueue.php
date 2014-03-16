@@ -15,8 +15,11 @@ function linksTo($html, $url) {
 
 function isReplyTo($html, $url) {
     $mf = Mf2\Parse($html);
-    if (isset($mf["rels"]["in-reply-to"])
+    if (gettype($mf["rels"]) == "array"
+        && isset($mf["rels"]["in-reply-to"])
         && in_array($url, $mf["rels"]["in-reply-to"]))
+        return true;
+    if (in_array($url, mfpath(mftype($mf, "h-entry"), "in-reply-to")))
         return true;
     if (in_array($url, mfpath(mftype($mf, "h-entry"), "in-reply-to/url")))
         return true;
