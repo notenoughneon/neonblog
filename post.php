@@ -31,7 +31,7 @@
                 <legend>Post</legend>
 
                 <div class="form-group">
-                    <label for="name" class="col-sm-2 control-label">Name:</label>
+                    <label for="name" class="col-sm-2 control-label">Title:</label>
                     <div class="col-sm-10">
                         <input id="name" type="text" class="form-control" placeholder="(Leave blank for note)" />
                     </div>
@@ -45,8 +45,9 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <textarea class="form-control" rows="8"></textarea>
+                    <label for="content" class="col-sm-2 control-label">Content:</label>
+                    <div class="col-sm-10">
+                        <textarea id="content" class="form-control" rows="8"></textarea>
                     </div>
                 </div>
 
