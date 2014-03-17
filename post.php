@@ -33,14 +33,14 @@
                 <div class="form-group">
                     <label for="name" class="col-sm-2 control-label">Title:</label>
                     <div class="col-sm-10">
-                        <input id="name" type="text" class="form-control" placeholder="(Leave blank for note)" />
+                        <input id="name" type="text" class="form-control" placeholder="Leave blank for note" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="reply-to" class="col-sm-2 control-label">Reply to:</label>
                     <div class="col-sm-10">
-                        <input id="reply-to" type="text" class="form-control" placeholder="(http://example.com/post-id)" />
+                        <input id="reply-to" type="text" class="form-control" placeholder="http://example.com/post-id" />
                     </div>
                 </div>
 
