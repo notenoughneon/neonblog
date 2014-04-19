@@ -1,3 +1,4 @@
+*.swp
 m/**
 p/**
 webmentions.txt
