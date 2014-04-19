@@ -20,7 +20,8 @@ $config = array(
     "postExtension" => ".html",
     "postsPerPage" => 20,
     "webmentionQueue" => "webmentions.txt",
-    "webmentionQueueLength" => 50
+    "webmentionQueueLength" => 50,
+    "tokenFile" => "tokens.txt" // make sure this is blocked in .htaccess
 );
 
 function startsWith($h, $n) {
