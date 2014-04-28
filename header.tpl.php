@@ -14,7 +14,7 @@
 
     <link href="<? echo $config["siteUrl"] . "/webmention.php" ?>" rel="webmention">
     <link href="https://indieauth.com/auth" rel="authorization_endpoint">
-    <link href="<? echo $config["siteUrl"] . "token.php" ?>" rel="token_endpoint">
+    <link href="<? echo $config["siteUrl"] . "/token.php" ?>" rel="token_endpoint">
 
   </head>
 
