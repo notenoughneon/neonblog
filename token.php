@@ -1,5 +1,6 @@
 <?php
 require("common.php");
+require("jsonstore.php");
 
 /**
  * Authenticate user with indieauth.com
@@ -30,35 +31,37 @@ function indieAuthenticate($code, $me) {
     return false;
 }
 
-function generateToken($cfg) {
-    //TODO: how secure is this entropy source?
+function generateToken($cfg, $me, $client_id, $scope) {
     $token = bin2hex(openssl_random_pseudo_bytes(16));
-
-    $fh = fopen($cfg["tokenFile"], "a+");
-    if ($fh === false)
-        throw new Exception("Unable to open token file");
-    if (!flock($fh, LOCK_EX))
-        throw new Exception("Unable to lock token file");
-    if (!fwrite($fh, "$token\n"))
-        throw new Exception("Unable to write to token file");
-    //TODO: are locks automatically released when scripts exit?
-    flock($fh, LOCK_UN);
-    fclose($fh);
-
+    $tokenstore = new JsonStore($cfg["tokenFile"]);
+    $tokenstore->value[] = array(
+        "me" => $me,
+        "client_id" => $client_id,
+        "scope" => $scope,
+        "date_issued" => date("c"),
+        "token" => $token
+    );
+    $tokenstore->flush();
     return $token;
 }
 
-if (empty($_POST["code"]))
-    do400("'code' not set");
-$code = $_POST["code"];
-if (empty($_POST["me"]))
-    do400("'me' not set");
-$me = $_POST["me"];
+function getRequiredPost($name) {
+    if (empty($_POST[$name]))
+        do400("Missing required parameter: '$name'");
+    return $_POST[$name];
+}
+
+$code = getRequiredPost("code");
+$me = getRequiredPost("me");
+$client_id = getRequiredPost("client_id");
+$scope = getRequiredPost("scope");
 
 try {
-    if (!indieAuthenticate($code, $me))
+    if ($scope != "post")
+        do400("Unsupported scope: '$scope'");
+    if (!indieAuthenticate($code, $me) || $me != $config["siteUrl"])
         do400("Authentication failed for $me");
-    $token = generateToken($config);
+    $token = generateToken($config, $me, $client_id, $scope);
     header("Content-Type: application/x-www-form-urlencoded");
     echo "access_token=$token&scope=post&me=" . urlencode($me);
 } catch (Exception $e) {
