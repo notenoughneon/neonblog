@@ -6,7 +6,7 @@ require("jsonstore.php");
  * Authenticate user with indieauth.com
  */
 function indieAuthenticate($code, $me) {
-    $verify_url = "http://indieauth.com/verify";
+    $verify_url = "https://indieauth.com/verify";
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $verify_url . "?token=$code");
