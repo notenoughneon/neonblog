@@ -16,6 +16,7 @@ $config = array(
         "Facebook" => "https://www.facebook.com/emma.kuo.5209",
         "Github" => "https://github.com/notenoughneon",
         "LinkedIn" => "http://www.linkedin.com/pub/emma-kuo/25/15a/586"),
+    "mediaRoot" => "m",
     "postRoot" => "p",
     "postExtension" => ".html",
     "postsPerPage" => 20,
@@ -44,6 +45,13 @@ function truncate($s, $n) {
         return substr($s, 0, $n) . "...";
     }
     return $s;
+}
+
+function array_any($array, $callback) {
+    foreach ($array as $elt)
+        if ($callback($elt))
+            return true;
+    return false;
 }
 
 function mftype($parsed, $type) {
@@ -102,6 +110,16 @@ function urlToLocal($cfg, $target) {
     return chopPrefix($targetUrl["path"], "/" . $cfg["postRoot"] . "/");
 }
 
+function generateSlug($name, $published) {
+    $datepart = date("YmdHi", strtotime($published));
+    if ($name === null)
+        return $datepart;
+    $namepart = strtolower($name);
+    $namepart = preg_replace("/[^a-z0-9 ]+/", "", $namepart);
+    $namepart = preg_replace("/ +/", "-", $namepart);
+    return "$datepart-$namepart";
+}
+
 function getPost($mf) {
     $e = mftype($mf, "h-entry");
     $post = array(
@@ -153,6 +171,27 @@ function generatePostIndex($c) {
     return $posts;
 }
 
+function getRequiredPost($name) {
+    if (empty($_POST[$name]))
+        do400("Missing required parameter: '$name'");
+    return $_POST[$name];
+}
+
+function getOptionalPost($name) {
+    if (empty($_POST[$name]))
+        return null;
+    return $POST[$name];
+}
+
+function do201($location = null) {
+    header("HTTP/1.1 201 Created");
+    if ($location !== null)
+        header("Location: $location");
+    echo "<h1>201 Created</h1>";
+    if ($location !== null)
+        echo "<p><a href=\"$location\">$location</a></p>";
+}
+
 function do202() {
     header("HTTP/1.1 202 Accepted");
     echo "<h1>202 Accepted</h1>";
@@ -162,6 +201,13 @@ function do202() {
 function do400($msg = "") {
     header("HTTP/1.1 400 Bad Request");
     echo "<h1>400 Bad Request</h1>";
+    echo "<p>$msg</p>";
+    exit();
+}
+
+function do401($msg = "") {
+    header("HTTP/1.1 401 Unauthorized");
+    echo "<h1>401 Unauthorized</h1>";
     echo "<p>$msg</p>";
     exit();
 }

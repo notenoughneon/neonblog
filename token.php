@@ -45,12 +45,6 @@ function generateToken($cfg, $me, $client_id, $scope) {
     return $token;
 }
 
-function getRequiredPost($name) {
-    if (empty($_POST[$name]))
-        do400("Missing required parameter: '$name'");
-    return $_POST[$name];
-}
-
 $code = getRequiredPost("code");
 $me = getRequiredPost("me");
 $client_id = getRequiredPost("client_id");
