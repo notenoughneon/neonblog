@@ -183,6 +183,12 @@ function getOptionalPost($name) {
     return $POST[$name];
 }
 
+function getOptionalFile($name) {
+    if (empty($_FILES[$name]))
+        return null;
+    return $_FILES[$name];
+}
+
 function do201($location = null) {
     header("HTTP/1.1 201 Created");
     if ($location !== null)

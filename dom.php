@@ -77,6 +77,41 @@ function createNote($cfg, $slug, $published, $content) {
     return $cfg["siteUrl"] . "/" . $relativeUrl;
 }
 
+function createPhoto($cfg, $slug, $published, $photo, $content) {
+    $relativeUrl = $cfg["postRoot"] . "/" . $slug;
+    $filename =  $relativeUrl . $cfg["postExtension"];
+    $photoUrl = $cfg["mediaRoot"] . "/" . basename($photo["name"]);
+    if (!move_uploaded_file($photo["tmp_name"], $photoUrl))
+        throw new Exception("Failed to move upload to $photoUrl");
+
+    $doc = new DOMDocument();
+
+    $hentry = appendElement($doc, "div", array("class" => "h-entry"));
+
+    $dtpublished = appendElement($hentry, "time", array(
+        "class" => "dt-published",
+        "datetime" => $published));
+
+    $hauthor = appendElement($hentry, "a", array(
+        "class" => "p-author h-card",
+        "href" => $cfg["siteUrl"]),
+    $cfg["aboutName"]);
+
+    $econtent = appendElement($hentry, "div", array(
+        "class" => "p-name e-content"),
+    "<img src=\"$photoUrl\">" .
+    $content);
+
+    $uurl = appendElement($hentry, "a", array(
+        "class" => "u-url",
+        "href" => $relativeUrl));
+
+    if (!$doc->saveHTMLFile($filename))
+        throw new Exception("Failed to write to $filename");
+
+    return $cfg["siteUrl"] . "/" . $relativeUrl;
+}
+
 //TODO: abstract file path from slug
 function insertReply($file, $reply) {
     $doc = new DOMDocument();
