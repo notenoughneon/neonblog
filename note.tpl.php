@@ -6,7 +6,7 @@
                   <? echo $config["aboutName"] ?></a> - 
                 <a class="u-url" href="<? echo $post["url"] ?>"><time class="dt-published" datetime="<? echo $post["published"] ?>"><? echo date("M j, Y g:i a", strtotime($post["published"])) ?></time></a>
               </p>
-              <div class="p-name e-content"><? echo $post["contentValue"] ?></div>
+              <div class="p-name e-content"><? echo $post["contentHtml"] ?></div>
             </div><!-- /.blog-post -->
 
             <? foreach ($replies as $reply) {

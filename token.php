@@ -48,7 +48,8 @@ function generateToken($cfg, $me, $client_id, $scope) {
 $code = getRequiredPost("code");
 $me = getRequiredPost("me");
 $client_id = getRequiredPost("client_id");
-$scope = getRequiredPost("scope");
+//$scope = getRequiredPost("scope");
+$scope = "post";
 
 try {
     if ($scope != "post")

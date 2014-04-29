@@ -180,7 +180,7 @@ function getRequiredPost($name) {
 function getOptionalPost($name) {
     if (empty($_POST[$name]))
         return null;
-    return $POST[$name];
+    return $_POST[$name];
 }
 
 function getOptionalFile($name) {

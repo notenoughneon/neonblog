@@ -4,11 +4,10 @@ require("dom.php");
 require("jsonstore.php");
 
 function getBearerToken() {
-    $headers = apache_request_headers();
-    if (isset($headers["Authorization"]))
+    if (isset($_SERVER["HTTP_AUTHORIZATION"]))
         if (preg_match(
             "/^Bearer (.+)/",
-            $headers["Authorization"],
+            $_SERVER["HTTP_AUTHORIZATION"],
             $matches))
             return $matches[1];
     if (isset($_POST["access_token"]))
@@ -24,7 +23,7 @@ function isAuthorized($cfg, $scope) {
     $tokenstore->close();
     return array_any(
         $tokenstore->value,
-        function($e) {
+        function($e) use($token, $scope) {
             return $e["token"] === $token &&
                 $e["scope"] === $scope;
         }

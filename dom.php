@@ -80,7 +80,7 @@ function createNote($cfg, $slug, $published, $content) {
 function createPhoto($cfg, $slug, $published, $photo, $content) {
     $relativeUrl = $cfg["postRoot"] . "/" . $slug;
     $filename =  $relativeUrl . $cfg["postExtension"];
-    $photoUrl = $cfg["mediaRoot"] . "/" . basename($photo["name"]);
+    $photoUrl = $cfg["mediaRoot"] . "/" . $slug . ".jpg";
     if (!move_uploaded_file($photo["tmp_name"], $photoUrl))
         throw new Exception("Failed to move upload to $photoUrl");
 
@@ -98,9 +98,11 @@ function createPhoto($cfg, $slug, $published, $photo, $content) {
     $cfg["aboutName"]);
 
     $econtent = appendElement($hentry, "div", array(
-        "class" => "p-name e-content"),
-    "<img src=\"$photoUrl\">" .
-    $content);
+        "class" => "p-name e-content"));
+    appendElement($econtent, "img", array(
+        "class" => "u-photo",
+        "src" => "/$photoUrl"));
+    $econtent->appendChild(new DOMText($content));
 
     $uurl = appendElement($hentry, "a", array(
         "class" => "u-url",
