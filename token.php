@@ -2,14 +2,30 @@
 require("common.php");
 require("jsonstore.php");
 
-/**
- * Authenticate user with indieauth.com
- */
-function indieAuthenticate($code, $me) {
-    $verify_url = "https://indieauth.com/verify";
+function formUrlencode($params) {
+    $pairs = array();
+    foreach ($params as $key => $val) {
+        $pairs[] = urlencode($key) . "=" . urlencode($val);
+    }
+    return implode("&", $pairs);
+}
+
+function formUrldecode($coded) {
+    $decoded = array();
+    foreach (explode("&", $coded) as $pair) {
+        list($key, $val) = explode("=", $pair);
+        $decoded[urldecode($key)] = urldecode($val);
+    }
+    return $decoded;
+}
+
+function indieAuthenticate($params) {
+    $verify_url = "https://indieauth.com/auth";
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $verify_url . "?token=$code");
+    curl_setopt($ch, CURLOPT_URL, $verify_url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, formUrlencode($params));
     curl_setopt($ch, CURLOPT_HEADER, false);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $page = curl_exec($ch);
@@ -18,17 +34,10 @@ function indieAuthenticate($code, $me) {
 
     if ($page === false)
         throw new Exception("GET $verify_url failed");
-    if (!startsWith($mimetype, "application/json"))
+    if ($mimetype !== "application/x-www-form-urlencoded")
         throw new Exception("Bad mimetype: $mimetype");
 
-    $response = json_decode($page, true);
-    if ($response === null)
-        throw new Exception("Json decode failed");
-
-    if (isset($response["me"]) && $response["me"] === $me)
-        return true;
-
-    return false;
+    return formUrldecode($page);
 }
 
 function generateToken($cfg, $me, $client_id, $scope) {
@@ -47,18 +56,29 @@ function generateToken($cfg, $me, $client_id, $scope) {
 
 $code = getRequiredPost("code");
 $me = getRequiredPost("me");
+$redirect_uri = getRequiredPost("redirect_uri");
 $client_id = getRequiredPost("client_id");
-//$scope = getRequiredPost("scope");
-$scope = "post";
+$state = getRequiredPost("state");
+
+$params = array(
+    "code" => $code,
+    "me" => $me,
+    "redirect_uri" => $redirect_uri,
+    "client_id" => $client_id,
+    "state" => $state
+);
 
 try {
-    if ($scope != "post")
-        do400("Unsupported scope: '$scope'");
-    if (!indieAuthenticate($code, $me) || $me != $config["siteUrl"])
+    $auth = indieAuthenticate($params);
+    if (empty($auth["me"]) ||
+        $auth["me"] !== $config["siteUrl"])
         do400("Authentication failed for $me");
-    $token = generateToken($config, $me, $client_id, $scope);
+    $token = generateToken($config, $me, $client_id, $auth["scope"]);
     header("Content-Type: application/x-www-form-urlencoded");
-    echo "access_token=$token&scope=post&me=" . urlencode($me);
+    echo formUrlencode(array(
+        "access_token" => $token,
+        "me" => $me,
+        "scope" => $auth["scope"]));
 } catch (Exception $e) {
     do500($e->getMessage());
 }
