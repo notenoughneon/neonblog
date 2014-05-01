@@ -1,5 +1,5 @@
 <?
-require("common.php");
+require("lib/common.php");
 $title = "Post - " . $config["siteTitle"];
 require("tpl/header.php");
 ?>

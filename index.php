@@ -1,5 +1,5 @@
 <?php
-require("common.php");
+require("lib/common.php");
 require("Mf2/Parser.php");
 
 $postIndex = generatePostIndex($config);

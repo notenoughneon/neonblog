@@ -1,41 +1,7 @@
 <?php
-require("common.php");
-require("dom.php");
-require("jsonstore.php");
-
-function getBearerToken() {
-    if (isset($_SERVER["HTTP_AUTHORIZATION"]))
-        if (preg_match(
-            "/^Bearer (.+)/",
-            $_SERVER["HTTP_AUTHORIZATION"],
-            $matches))
-            return $matches[1];
-    if (isset($_POST["access_token"]))
-        return $_POST["access_token"];
-    return null;
-}
-
-function isAuthorized($cfg, $scope) {
-    $token = getBearerToken();
-    if ($token === null)
-        return false;
-    $tokenstore = new JsonStore($cfg["tokenFile"]);
-    $tokenstore->close();
-    return array_any(
-        $tokenstore->value,
-        function($e) use($token, $scope) {
-            return $e["token"] === $token &&
-                $e["scope"] === $scope;
-        }
-    );
-}
-
-function requireAuthorization($cfg, $scope) {
-    if (!isAuthorized($cfg, $scope)) {
-        header("WWW-Authenticate: Bearer realm=\"$scope\"");
-        do401();
-    }
-}
+require("lib/common.php");
+require("lib/auth.php");
+require("lib/dom.php");
 
 requireAuthorization($config, "post");
 

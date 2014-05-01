@@ -1,6 +1,6 @@
 <?php
-require("common.php");
-require("dom.php");
+require("lib/common.php");
+require("lib/dom.php");
 require("Mf2/Parser.php");
 
 function linksTo($html, $url) {

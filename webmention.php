@@ -1,5 +1,5 @@
 <?php
-require("common.php");
+require("lib/common.php");
 
 function isTargetValid($cfg, $target) {
     return array_key_exists(urlToLocal($cfg, $target), generatePostIndex($cfg));
