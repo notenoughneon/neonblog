@@ -150,7 +150,7 @@ function insertReply($file, $reply) {
     if ($reply["published"] != null)
         $time = appendElement($hcite, "time", array(
             "class" => "dt-published",
-            "datetime", $reply["published"]));
+            "datetime" => $reply["published"]));
 
     //url
     $url = appendElement($hcite, "a", array(
