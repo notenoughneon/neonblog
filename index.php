@@ -11,7 +11,7 @@ if (isset($_GET["p"])) {
     $mf2 = Mf2\parse(file_get_contents($postIndex[$p]), $config["siteUrl"]);
     $post = getPost($mf2);
     $replies = getReplies($mf2);
-    require("post.tpl.php");
+    require("tpl/post.php");
     exit();
 } else {
     $o = 0;
@@ -27,7 +27,7 @@ if (isset($_GET["p"])) {
     else $prevUrl = "?o=" . ($o + $l) . "&l=" . $l;
     if ($o <= 0) $nextUrl = null;
     else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l;
-    require("index.tpl.php");
+    require("tpl/index.php");
     exit();
 }
 

@@ -1,13 +1,13 @@
 <? 
 $title = $config["siteTitle"];
-require("header.tpl.php");
+require("header.php");
 ?>
 
           <?foreach ($posts as $post) {
               if ($post["type"] === "article")
-                  include("article.tpl.php");
+                  include("article.php");
               else
-                  include("note.tpl.php");
+                  include("note.php");
             } ?>
 
           <ul class="pager">
@@ -18,4 +18,4 @@ require("header.tpl.php");
             <? } ?>
           </ul>
 
-<? require("footer.tpl.php") ?>
+<? require("footer.php") ?>

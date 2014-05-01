@@ -1,7 +1,7 @@
 <?
 require("common.php");
 $title = "Post - " . $config["siteTitle"];
-require("header.tpl.php");
+require("tpl/header.php");
 ?>
 
             <form class="form-horizontal">
@@ -36,4 +36,4 @@ require("header.tpl.php");
 
             </form>
 
-<? require("footer.tpl.php") ?>
+<? require("tpl/footer.php") ?>
