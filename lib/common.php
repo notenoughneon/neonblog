@@ -204,6 +204,13 @@ function do202() {
     exit();
 }
 
+function do302($location) {
+    header("HTTP/1.1 302 Found");
+    header("Location: $location");
+    echo "<h1>302 Found</h1>";
+    echo "<p>Redirecting to <a href=\"$location\">$location</a></p>";
+}
+
 function do400($msg = "") {
     header("HTTP/1.1 400 Bad Request");
     echo "<h1>400 Bad Request</h1>";

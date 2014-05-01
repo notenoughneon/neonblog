@@ -1,16 +1,19 @@
 <?
 require("lib/common.php");
 $title = "Post - " . $config["siteTitle"];
+$token = $_COOKIE["bearer_token"];
 require("tpl/header.php");
 ?>
 
-            <form class="form-horizontal">
+            <form class="form-horizontal" action="micropub.php" method="post">
+                <input type="hidden" name="h" value="entry" />
+                <input type="hidden" name="access_token" value="<? echo $token ?>" />
                 <legend>Post</legend>
 
                 <div class="form-group">
                     <label for="name" class="col-sm-2 control-label">Title:</label>
                     <div class="col-sm-10">
-                        <input id="name" type="text" class="form-control" placeholder="Leave blank for note" />
+                        <input id="name" name="name" type="text" class="form-control" placeholder="Leave blank for note" />
                     </div>
                 </div>
 
@@ -24,7 +27,7 @@ require("tpl/header.php");
                 <div class="form-group">
                     <label for="content" class="col-sm-2 control-label">Content:</label>
                     <div class="col-sm-10">
-                        <textarea id="content" class="form-control" rows="8"></textarea>
+                        <textarea id="content" name="content" class="form-control" rows="8"></textarea>
                     </div>
                 </div>
 
