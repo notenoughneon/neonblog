@@ -5,9 +5,9 @@ require("header.php");
 
           <?foreach ($posts as $post) {
               if ($post["type"] === "article")
-                  include("article.php");
+                  include("article-sum.php");
               else
-                  include("note.php");
+                  include("note-sum.php");
             } ?>
 
           <ul class="pager">

@@ -8,12 +8,11 @@
                 <a class="u-url" href="<? echo $post["url"] ?>"><time class="dt-published" datetime="<? echo $post["published"] ?>"><? echo date("M j, Y g:i a", strtotime($post["published"])) ?></time></a>
               </p>
               <div class="e-content"><? echo $post["contentHtml"] ?></div>
+              <?
+                $replycount = count($post["replies"]);
+                if ($replycount > 0) {
+              ?>
+                  <a href="<? echo $post["url"] ?>"><span class="glyphicon glyphicon-comment"></span> <? echo $replycount ?></a>
+              <? } ?>
             </div><!-- /.blog-post -->
-
-            <? foreach ($post["replies"] as $reply) {
-                if (isset($reply["in-reply-to"]))
-                    include("reply.php");
-                else
-                    include("mention.php");
-               } ?>
           </div>

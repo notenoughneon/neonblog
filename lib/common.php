@@ -135,6 +135,7 @@ function getPost($mf) {
     );
     $post["type"] = ($post["name"] === $post["contentValue"]) 
         ? "note" : "article";
+    $post["replies"] = getReplies($mf);
     return $post;
 }
 

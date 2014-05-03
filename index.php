@@ -10,7 +10,6 @@ if (isset($_GET["p"])) {
         do404($p);
     $mf2 = Mf2\parse(file_get_contents($postIndex[$p]), $config["siteUrl"]);
     $post = getPost($mf2);
-    $replies = getReplies($mf2);
     require("tpl/post.php");
     exit();
 } else {
@@ -19,7 +18,6 @@ if (isset($_GET["p"])) {
     if (isset($_GET["o"])) $o = $_GET["o"];
     if (isset($_GET["l"])) $l = $_GET["l"];
     $posts = array();
-    $replies = array(); // dummy to keep the template from breaking
     foreach(array_slice($postIndex, $o, $l) as $filename) {
         $posts[] = getPost(Mf2\parse(file_get_contents($filename), $config["siteUrl"]));
     }

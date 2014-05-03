@@ -9,7 +9,7 @@
               <div class="p-name e-content"><? echo $post["contentHtml"] ?></div>
             </div><!-- /.blog-post -->
 
-            <? foreach ($replies as $reply) {
+            <? foreach ($post["replies"] as $reply) {
                 if (isset($reply["in-reply-to"]))
                     include("reply.php");
                 else
