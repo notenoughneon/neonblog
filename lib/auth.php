@@ -53,6 +53,15 @@ function generateToken($cfg, $me, $client_id, $scope) {
     return $token;
 }
 
+function removeToken($cfg, $token) {
+    $tokenstore = new JsonStore($cfg["tokenFile"]);
+    $tokenstore->value = array_filter($tokenstore->value,
+        function($e) use($token) {
+            return $e["token"] !== $token;
+        });
+    $tokenstore->flush();
+}
+
 function getBearerToken() {
     if (isset($_SERVER["HTTP_AUTHORIZATION"]))
         if (preg_match(

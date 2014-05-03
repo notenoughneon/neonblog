@@ -105,7 +105,7 @@ h1 a:hover {
 .blog-title {
   margin-top: 30px;
   margin-bottom: 0;
-  font-size: 60px;
+  font-size: 40px;
   font-weight: normal;
 }
 .blog-description {
@@ -167,7 +167,7 @@ h1 a:hover {
 }
 .blog-post-title {
   margin-bottom: 5px;
-  font-size: 40px;
+  font-size: 30px;
 }
 .blog-post-meta {
   /* margin-bottom: 20px; */

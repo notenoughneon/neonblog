@@ -16,10 +16,44 @@
     <link href="https://indieauth.com/auth" rel="authorization_endpoint">
     <link href="<? echo $config["siteUrl"] . "/token.php" ?>" rel="token_endpoint">
     <link href="<? echo $config["siteUrl"] . "/micropub.php" ?>" rel="micropub">
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 
   </head>
 
   <body>
+
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse">
+                <?
+                if (empty($_COOKIE["bearer_token"])) {
+                ?>
+                <form class="navbar-form navbar-right" role="form" action="http://indieauth.com/auth" method="get">
+                <input type="hidden" name="me" value="<? echo $config["siteUrl"] ?>" />
+                <input type="hidden" name="client_id" value="<? echo $config["siteUrl"] ?>" />
+                <input type="hidden" name="redirect_uri" value="<? echo $config["siteUrl"] . "/authcb.php" ?>" />
+                <input type="hidden" name="scope" value="post" />
+                    <button type="submit" class="btn">Sign in</button>
+                </form>
+                <? } else { ?>
+                <ul class="nav navbar-nav">
+                    <li><a href="post.php">Post</a></li>
+                </ul>
+                <form class="navbar-form navbar-right" role="form" action="logout.php" method="post">
+                    <button type="submit" class="btn">Sign out</button>
+                </form>
+                <? } ?>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
 
