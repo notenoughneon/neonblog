@@ -1,11 +1,12 @@
 <?php
 require("lib/common.php");
 require("lib/dom.php");
+require("lib/jsonstore.php");
 require("Mf2/Parser.php");
 
 function linksTo($html, $url) {
     $doc = new DOMDocument();
-    if (!$doc->loadHTML($html))
+    if (!@$doc->loadHTML($html))
         return false;
     foreach ($doc->getElementsByTagName("a") as $a) {
         if ($a->getAttribute("href") == $url)
@@ -29,29 +30,13 @@ function isReplyTo($html, $url) {
 
 $postIndex = generatePostIndex($config);
 
-$fh = fopen($config["webmentionQueue"], "r+");
-if ($fh === false) {
-    echo "Unable to open queue\n";
-    goto finally;
-}
-if (!flock($fh, LOCK_EX)) {
-    echo "Unable to lock queue\n";
-    goto finally;
-}
-$mentions = array();
-while (false != ($mention = fgets($fh))) {
-    if ($mention != "") {
-        $parts = explode(">>", $mention);
-        if (count($parts) != 2) {
-            echo "Malformed entry: $mention\n";
-            goto finally;
-        }
-        $mentions[] = array_map("trim", $parts);
-    }
-}
-foreach ($mentions as $mention) {
-    list($source, $target) = $mention;
-    echo "* processing $source\n";
+$mentionstore = new JsonStore($config["webmentionQueue"]);
+
+while (count($mentionstore->value) > 0) {
+    $mention = array_shift($mentionstore->value);
+    $source = $mention["source"];
+    $target = $mention["target"];
+    echo "Processing $source -> $target\n";
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $source);
     curl_setopt($ch, CURLOPT_HEADER, false);
@@ -60,37 +45,31 @@ foreach ($mentions as $mention) {
     curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
     $page = curl_exec($ch);
     $mimetype = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-    curl_close($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($page === false) {
-        echo "web request failed\n";
-        continue;
-    }
-    if (!startsWith($mimetype, "text/html")) {
-        echo "bad mimetype: $mimetype\n";
-        continue;
-    }
-    if (linksTo($page, $target)) {
-        echo "found link to target\n";
+        $error = curl_error($ch);
+        echo "\tWeb request failed: $error\n";
+    } else if ($httpcode != 200) {
+        echo "\tBad http code: $httpcode\n";
+    } else if (!startsWith($mimetype, "text/html")) {
+        echo "\tBad mimetype: $mimetype\n";
+    } else if (!linksTo($page, $target)) {
+        echo "\tNo link to $target found\n";
+    } else {
+        echo "\tFound link to $target\n";
         $mf = Mf2\Parse($page, $source);
         $reply = getPost($mf);
         if (isReplyTo($page, $target)) {
-            echo "found in-reply-to target\n";
+            echo "\tFound reply to $target\n";
             $reply["in-reply-to"] = $target;
         } else {
             unset($reply["in-reply-to"]);
         }
         insertReply($postIndex[urlToLocal($config, $target)], $reply);
     }
-    else {
-        echo "no link to target found\n";
-    }
+    curl_close($ch);
+    $mentionstore->sync();
 }
-
-if (!ftruncate($fh, 0))
-    echo "Failed to clear queue\n";
-
-finally:
-flock($fh, LOCK_UN);
-fclose($fh);
+$mentionstore->flush();
 
 ?>

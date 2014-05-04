@@ -30,11 +30,15 @@ class JsonStore
             throw new Exception("Unable to close $this->filename");
     }
 
-    public function flush() {
+    public function sync() {
         if (!ftruncate($this->fh, 0))
             throw new Exception("Unable to truncate $this->filename");
         if (!fwrite($this->fh, json_encode($this->value)))
             throw new Exception("Unable to write to $this->filename");
+    }
+
+    public function flush() {
+        $this->sync();
         $this->close();
     }
 }
