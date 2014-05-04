@@ -39,7 +39,7 @@ function indieAuthenticate($params) {
     return formUrldecode($page);
 }
 
-function generateToken($cfg, $me, $client_id, $scope) {
+function generateToken($cfg, $client_id, $scope) {
     $token = bin2hex(openssl_random_pseudo_bytes(16));
     $tokenstore = new JsonStore($cfg["tokenFile"]);
     $tokenstore->value[$token] = array(

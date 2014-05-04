@@ -21,7 +21,7 @@ try {
     if (empty($auth["me"]) ||
         $auth["me"] !== $config["siteUrl"])
         do400("Authentication failed for $me");
-    $token = generateToken($config, $me, $client_id, $auth["scope"]);
+    $token = generateToken($config, $client_id, $auth["scope"]);
     header("Content-Type: application/x-www-form-urlencoded");
     echo formUrlencode(array(
         "access_token" => $token,

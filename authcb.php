@@ -13,7 +13,7 @@ $params = array(
 );
 $auth = indieAuthenticate($params);
 if (isset($auth["me"]) && $auth["me"] === $config["siteUrl"]) {
-    $token = generateToken($config, $me, $client_id, $auth["scope"]);
+    $token = generateToken($config, $client_id, $auth["scope"]);
     setcookie("bearer_token", $token, time() + 60*60*24*365);
     do302("post.php");
 }
