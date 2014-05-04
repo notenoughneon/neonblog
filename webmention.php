@@ -13,8 +13,8 @@ if (!isTargetValid($config, $target))
     do400("$target isn't a valid target");
 
 try {
-    $mentionstore = new JsonStore($config["webmentionQueue"]);
-    if (count($mentionstore->value) >= $config["webmentionQueueLength"]) {
+    $mentionstore = new JsonStore($config["webmentionFile"]);
+    if (count($mentionstore->value) >= $config["webmentionLength"]) {
         throw new Exception("Webmention queue is full");
     }
     $mentionstore->value[] = array(

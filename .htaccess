@@ -6,7 +6,7 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
 Order allow,deny
 Deny from all
 </Files>
-<Files "tokens.txt">
+<Files "tokens.json">
 Order allow,deny
 Deny from all
 </Files>

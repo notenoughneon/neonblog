@@ -30,7 +30,7 @@ function isReplyTo($html, $url) {
 
 $postIndex = generatePostIndex($config);
 
-$mentionstore = new JsonStore($config["webmentionQueue"]);
+$mentionstore = new JsonStore($config["webmentionFile"]);
 
 while (count($mentionstore->value) > 0) {
     $mention = array_shift($mentionstore->value);
