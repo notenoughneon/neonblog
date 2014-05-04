@@ -42,12 +42,10 @@ function indieAuthenticate($params) {
 function generateToken($cfg, $me, $client_id, $scope) {
     $token = bin2hex(openssl_random_pseudo_bytes(16));
     $tokenstore = new JsonStore($cfg["tokenFile"]);
-    $tokenstore->value[] = array(
-        "me" => $me,
+    $tokenstore->value[$token] = array(
         "client_id" => $client_id,
         "scope" => $scope,
-        "date_issued" => date("c"),
-        "token" => $token
+        "date_issued" => date("c")
     );
     $tokenstore->flush();
     return $token;
@@ -55,10 +53,7 @@ function generateToken($cfg, $me, $client_id, $scope) {
 
 function removeToken($cfg, $token) {
     $tokenstore = new JsonStore($cfg["tokenFile"]);
-    $tokenstore->value = array_filter($tokenstore->value,
-        function($e) use($token) {
-            return $e["token"] !== $token;
-        });
+    unset($tokenstore->value[$token]);
     $tokenstore->flush();
 }
 
@@ -80,13 +75,8 @@ function isAuthorized($cfg, $scope) {
         return false;
     $tokenstore = new JsonStore($cfg["tokenFile"]);
     $tokenstore->close();
-    return array_any(
-        $tokenstore->value,
-        function($e) use($token, $scope) {
-            return $e["token"] === $token &&
-                $e["scope"] === $scope;
-        }
-    );
+    return isset($tokenstore->value[$token])
+        && $tokenstore->value[$token]["scope"] === $scope;
 }
 
 function requireAuthorization($cfg, $scope) {
