@@ -11,7 +11,7 @@ function appendElement($parent, $tag, $attrs = array(), $text = null) {
     return $elt;
 }
 
-function createArticle($cfg, $slug, $name, $published, $content) {
+function createArticle($cfg, $slug, $replyto, $name, $published, $content) {
     $relativeUrl = $cfg["postRoot"] . "/" . $slug;
     $filename =  $relativeUrl . $cfg["postExtension"];
 
@@ -32,6 +32,12 @@ function createArticle($cfg, $slug, $name, $published, $content) {
         "href" => $cfg["siteUrl"]),
     $cfg["aboutName"]);
 
+    if ($replyto !== null) {
+        $uinreplyto = appendElement($hentry, "a", array(
+            "class" => "u-in-reply-to",
+            "href" => $replyto));
+    }
+
     $econtent = appendElement($hentry, "div", array(
         "class" => "e-content"),
     $content);
@@ -46,7 +52,7 @@ function createArticle($cfg, $slug, $name, $published, $content) {
     return $cfg["siteUrl"] . "/" . $relativeUrl;
 }
 
-function createNote($cfg, $slug, $published, $content) {
+function createNote($cfg, $slug, $replyto, $published, $content) {
     $relativeUrl = $cfg["postRoot"] . "/" . $slug;
     $filename =  $relativeUrl . $cfg["postExtension"];
 
@@ -62,6 +68,12 @@ function createNote($cfg, $slug, $published, $content) {
         "class" => "p-author h-card",
         "href" => $cfg["siteUrl"]),
     $cfg["aboutName"]);
+
+    if ($replyto !== null) {
+        $uinreplyto = appendElement($hentry, "a", array(
+            "class" => "u-in-reply-to",
+            "href" => $replyto));
+    }
 
     $econtent = appendElement($hentry, "div", array(
         "class" => "p-name e-content"),

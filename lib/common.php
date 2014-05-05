@@ -240,5 +240,26 @@ function do500($msg = "") {
     exit();
 }
 
+function fetchPage($url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+    $page = curl_exec($ch);
+    $mimetype = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($page === false) {
+        $error = curl_error($ch);
+        throw new Exception("Web request failed: $error");
+    } else if ($httpcode != 200) {
+        throw new Exception("Bad http code: $httpcode");
+    } else if (!startsWith($mimetype, "text/html")) {
+        throw new Exception("Bad mimetype: $mimetype");
+    }
+    curl_close($ch);
+    return $page;
+}
 
 ?>

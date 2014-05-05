@@ -20,7 +20,7 @@ require("tpl/header.php");
                 <div class="form-group">
                     <label for="reply-to" class="col-sm-2 control-label">Reply to:</label>
                     <div class="col-sm-10">
-                        <input id="reply-to" type="text" class="form-control" placeholder="http://example.com/post-id" />
+                        <input id="reply-to" name="in-reply-to" type="text" class="form-control" placeholder="http://example.com/post-id" />
                     </div>
                 </div>
 
