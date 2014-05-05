@@ -7,8 +7,8 @@ Features
 --------
 
 * Microformats2 markup of content
-* Supports post types: "article" and "note"
-* Receive and display webmentions
+* Post types: "article", "note", and "photo"
+* Send and receive webmentions
 * Micropub endpoint
 * No SQL database -- posts are stored in html with microformats2
 
@@ -21,10 +21,10 @@ Requirements:
 * mod_rewrite
 * PHP-Mf2
 
-All configurable parameters are in `$config` in `common.php`. To log into the posting UI, browse to `login.php`. It relies on IndieAuth for authentication. Posting order is defined by lexicographic
+All configurable parameters are in `$config` in `common.php`. It relies on IndieAuth for authentication, so you must set at least one IndieAuth compatible rel-me link. Posts are stored as html fragments in `p`. Posting order is defined by lexicographic
 order of the filenames. This may change in the future to reflect the `published` date parsed from the files.
 
-Received webmentions are queued in the file `webmentions.txt`. To process the queue, manually run
+Received webmentions are queued in the file `webmentions.json`. To process the queue, manually run
 `php -f processqueue.php`, or run it periodically from cron.
 
 TODO
@@ -33,7 +33,7 @@ TODO
 * ~~License~~
 * ~~Posting UI~~
 * ~~Micropub~~
-* Sending webmentions
+* ~~Sending webmentions~~
 * Reply contexts
 * POSSE
 
