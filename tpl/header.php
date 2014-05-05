@@ -45,9 +45,9 @@
                 </form>
                 <? } else { ?>
                 <ul class="nav navbar-nav">
-                    <li><a href="post.php">Post</a></li>
+                    <li><a href="/post.php">Post</a></li>
                 </ul>
-                <form class="navbar-form navbar-right" role="form" action="logout.php" method="post">
+                <form class="navbar-form navbar-right" role="form" action="/logout.php" method="post">
                     <button type="submit" class="btn">Sign out</button>
                 </form>
                 <? } ?>
