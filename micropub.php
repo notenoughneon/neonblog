@@ -2,6 +2,7 @@
 require("lib/common.php");
 require("lib/auth.php");
 require("lib/dom.php");
+require("lib/webmention.php");
 
 function links($html) {
     $links = array();
@@ -11,44 +12,6 @@ function links($html) {
     foreach ($doc->getElementsByTagName("a") as $a)
         $links[] = $a->getAttribute("href");
     return $links;
-}
-
-function discoverWebmention($html) {
-    $doc = new DOMDocument();
-    if (!@$doc->loadHTML($html))
-        return false;
-    foreach ($doc->getElementsByTagName("link") as $link) {
-        $rels = explode(" ", $link->getAttribute("rel"));
-        if (in_array("webmention", $rels) ||
-            in_array("http://webmention.org/", $rels)) {
-            return $link->getAttribute("href");
-        }
-    }
-    return false;
-}
-
-function sendMention($source, $target) {
-    //fetch source root
-    $sourceparts = parse_url($source);
-    $page = fetchPage($sourceparts["host"]);
-    //discover webmention endpoint
-    $endpoint = discoverWebmention($page);
-    if ($endpoint === false)
-        throw new Exception("No webmention endpoint found");
-    //send webmention
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $endpoint);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, formUrlencode(array(
-        "source" => $source,
-        "target" => $target)));
-    curl_setopt($ch, CURLOPT_HEADER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $page = curl_exec($ch);
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    if (!($httpcode == 200 || $httpcode == 202))
-        throw new Exception("Bad http code: $httpcode");
 }
 
 requireAuthorization($config, "post");
