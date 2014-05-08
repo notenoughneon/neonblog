@@ -39,8 +39,10 @@ function createArticle($cfg, $slug, $replyto, $name, $published, $content) {
     }
 
     $econtent = appendElement($hentry, "div", array(
-        "class" => "e-content"),
-    $content);
+        "class" => "p-name e-content"));
+    $fragment = $doc->createDocumentFragment();
+    $fragment->appendXML($content);
+    $econtent->appendChild($fragment);
 
     $uurl = appendElement($hentry, "a", array(
         "class" => "u-url",
@@ -76,8 +78,10 @@ function createNote($cfg, $slug, $replyto, $published, $content) {
     }
 
     $econtent = appendElement($hentry, "div", array(
-        "class" => "p-name e-content"),
-    $content);
+        "class" => "p-name e-content"));
+    $fragment = $doc->createDocumentFragment();
+    $fragment->appendXML($content);
+    $econtent->appendChild($fragment);
 
     $uurl = appendElement($hentry, "a", array(
         "class" => "u-url",
