@@ -8,7 +8,7 @@ if (isset($_GET["p"])) {
     $p = $_GET["p"];
     if (!isset($postIndex[$p]))
         do404($p);
-    $mf2 = Mf2\parse(file_get_contents($postIndex[$p]), $config["siteUrl"]);
+    $mf2 = Mf2\parse(file_get_contents($postIndex[$p]));
     $post = getPost($mf2);
     require("tpl/post.php");
     exit();
@@ -19,7 +19,7 @@ if (isset($_GET["p"])) {
     if (isset($_GET["l"])) $l = $_GET["l"];
     $posts = array();
     foreach(array_slice($postIndex, $o, $l) as $filename) {
-        $posts[] = getPost(Mf2\parse(file_get_contents($filename), $config["siteUrl"]));
+        $posts[] = getPost(Mf2\parse(file_get_contents($filename)));
     }
     if (($o + $l) >= count($postIndex)) $prevUrl = null;
     else $prevUrl = "?o=" . ($o + $l) . "&l=" . $l;

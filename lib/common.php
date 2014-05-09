@@ -185,7 +185,8 @@ function getOptionalPost($name) {
 }
 
 function getOptionalFile($name) {
-    if (empty($_FILES[$name]))
+    if (empty($_FILES[$name])
+        || $_FILES[$name]["error"] !== UPLOAD_ERR_OK)
         return null;
     return $_FILES[$name];
 }

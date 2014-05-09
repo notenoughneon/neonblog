@@ -5,7 +5,7 @@ $token = $_COOKIE["bearer_token"];
 require("tpl/header.php");
 ?>
 
-            <form class="form-horizontal" action="micropub.php" method="post">
+            <form class="form-horizontal" enctype="multipart/form-data" action="micropub.php" method="post">
                 <input type="hidden" name="h" value="entry" />
                 <input type="hidden" name="access_token" value="<? echo $token ?>" />
                 <legend>Post</legend>
@@ -31,6 +31,12 @@ require("tpl/header.php");
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="photo" class="col-sm-2 control-label">Photo:</label>
+                    <div class="col-sm-10">
+                        <input id="photo" name="photo" type="file" />
+                    </div>
+                </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-primary">Submit</input>
