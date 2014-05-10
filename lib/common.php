@@ -1,29 +1,12 @@
 <?php
 ini_set("display_errors", 1);
+require_once("jsonstore.php");
 
-$config = array(
-    "siteUrl" => "http://notenoughneon.com",
-    "siteTitle" => "Not Enough Neon",
-    "aboutNick" => "Emma",
-    "aboutName" => "Emma Kuo",
-    "aboutPhoto" => "/m/emma-tw-73.jpeg",
-    "aboutBlurb" => "Software developer in Portland, OR.",
-    "elsewhere" => array(
-        "Twitter" => "https://twitter.com/notenoughneon",
-        "Instagram" => "http://instagram.com/emmackuo",
-        "SoundCloud" => "https://soundcloud.com/notenoughneon",
-        "Tumblr" => "http://notenoughneon.tumblr.com",
-        "Facebook" => "https://www.facebook.com/emma.kuo.5209",
-        "Github" => "https://github.com/notenoughneon",
-        "LinkedIn" => "http://www.linkedin.com/pub/emma-kuo/25/15a/586"),
-    "mediaRoot" => "m",
-    "postRoot" => "p",
-    "postExtension" => ".html",
-    "postsPerPage" => 20,
-    "webmentionFile" => "webmentions.json",
-    "webmentionLength" => 50,
-    "tokenFile" => "tokens.json" // make sure this is blocked in .htaccess
-);
+$configstore = new JsonStore("config.json", true);
+$configstore->close();
+$config = $configstore->value;
+if ($config === null)
+    die("Unable to load config.json");
 
 function startsWith($h, $n) {
     return substr($h, 0, strlen($n)) === $n;

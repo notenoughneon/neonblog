@@ -1,6 +1,5 @@
 <?php
 require("lib/common.php");
-require("lib/jsonstore.php");
 
 function isTargetValid($cfg, $target) {
     return array_key_exists(urlToLocal($cfg, $target), generatePostIndex($cfg));

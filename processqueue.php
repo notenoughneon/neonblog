@@ -1,7 +1,6 @@
 <?php
 require("lib/common.php");
 require("lib/dom.php");
-require("lib/jsonstore.php");
 require("Mf2/Parser.php");
 
 function linksTo($html, $url) {
