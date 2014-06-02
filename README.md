@@ -21,7 +21,7 @@ Requirements:
 * mod_rewrite
 * PHP-Mf2
 
-All configurable parameters are in `$config` in `common.php`. It relies on IndieAuth for authentication, so you must set at least one IndieAuth compatible rel-me link. Posts are stored as html fragments in `p`. Posting order is defined by lexicographic
+All configurable parameters are in `config.json`. It relies on IndieAuth for authentication, so you must set at least one IndieAuth compatible rel-me link. Posts are stored as html fragments in `p`. Posting order is defined by lexicographic
 order of the filenames. This may change in the future to reflect the `published` date parsed from the files.
 
 Received webmentions are queued in the file `webmentions.json`. To process the queue, manually run
@@ -36,6 +36,11 @@ TODO
 * ~~Sending webmentions~~
 * Reply contexts
 * POSSE
+  * twitter
+* https support
+* post formatting (linebreaks, url auto-linking)
+* comment approval UI
+* caching
 
 License
 -------
