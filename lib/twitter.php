@@ -1,14 +1,90 @@
 <?php
-$twitterMaxLen = 140;
-$twitterUrlLen = 22;
+namespace TwitterElide;
 
-function twitterTokenize($str) {
-    $patterns = array(
-        "url" => "~^(https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?$~i",
-        "hashtag" => "~^#\w*[a-z]\w*$~i",
-        "name" => "~^@\w+$~");
+const URL_LEN = 22;
+const MAX_LEN = 140;
+
+abstract class Token {
+    public $next = null;
+
+    public function __construct($value) {
+        $this->value = $value;
+    }
+
+    public function totalLength() {
+        $length = $this->length();
+        if ($this->next != null)
+            $length += $this->next->totalLength();
+        return $length;
+    }
+
+    protected function length() {
+        return strlen($this->value);
+    }
+
+    protected function shorten($delta) {
+        return $delta;
+    }
+
+    public function elideTo($len) {
+        if ($len > 0 && $len <= $this->length())
+            $len -= 4;
+        $delta = $len - $this->length();
+        if ($this->next != null)
+            $delta = $this->next->elideTo($delta);
+        return $this->shorten($delta);
+    }
+
+    public function append($token) {
+        if ($this->next === null)
+            $this->next = $token;
+        else $this->next->append($token);
+    }
+
+    public function toString() {
+        if ($this->next == null)
+            return $this->value;
+        return $this->value . $this->next->toString();
+    }
+}
+
+class TextToken extends Token {
+    protected function shorten($delta) {
+        $len = $this->length();
+        if ($delta < 0) {
+            if ($len + $delta < 1) {
+                $this->value = " ";
+                return $delta + $len - 1;
+            } else {
+                $this->value = substr($this->value, 0, $len + $delta) . "... ";
+                return 0;
+            }
+        }
+        return $delta;
+    }
+
+    public function append($token) {
+        if ($this->next === null) {
+            if ($token instanceof TextToken)
+                $this->value .= $token->value;
+            else
+                $this->next = $token;
+        }
+        else $this->next->append($token);
+    }
+}
+
+class UrlToken extends Token {
+    protected function length() { return URL_LEN; }
+}
+
+class NameToken extends Token {}
+
+class HashToken extends Token {}
+
+function tokenize($str) {
     $punc = "[(),\.:!?]*";
-    $tokens = array();
+    $tokens = null;
     while (strlen($str) > 0) {
         if (preg_match("/^[\s]+/", $str, $matches)) {
         } else {
@@ -16,27 +92,25 @@ function twitterTokenize($str) {
             assert(preg_match("/^($punc)(\S+?)($punc)$/", $matches[0], $matches));
             array_shift($matches);
         }
-        foreach ($matches as $token) {
-            if (strlen($token) > 0) {
-                $toktype = "text";
-                foreach ($patterns as $type => $regex) {
-                    if (preg_match($regex, $token))
-                        $toktype = $type;
-                }
-                $last = count($tokens) - 1;
-                if ($toktype == "text" && $last >= 0 && $tokens[$last]["type"] == "text") {
-                    $tokens[$last]["value"] = $tokens[$last]["value"] . $token;
-                } else {
-                    $tokens[] = array("type" => $toktype, "value" => $token);
-                }
-                $str = substr($str, strlen($token));
+        foreach ($matches as $lex) {
+            if (strlen($lex) > 0) {
+                if (preg_match("~^(https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?$~i", $lex))
+                    $tok = new UrlToken($lex);
+                else if (preg_match("~^#\w*[a-z]\w*$~i", $lex))
+                    $tok = new HashToken($lex);
+                else if (preg_match("~^@\w+$~", $lex))
+                    $tok = new NameToken($lex);
+                else
+                    $tok = new TextToken($lex);
+                if ($tokens == null)
+                    $tokens = $tok;
+                else
+                    $tokens->append($tok);
+                $str = substr($str, strlen($lex));
             }
         }
     }
     return $tokens;
-}
-
-function twitterElideTo($str, $len) {
 }
 
 function elideTo($str, $len) {
@@ -45,17 +119,18 @@ function elideTo($str, $len) {
     return $str;
 }
 
-function twitterize($title, $content, $url) {
+function format($title, $content, $url) {
     if (isset($title) && $title !== "") {
         //article
-        $title = elideTo($title, $twitterMaxLen - 1 - $twitterUrlLen);
+        $title = elideTo($title, MAX_LEN - 1 - URL_LEN);
         return "$title $url";
     } else {
         //note
-        if (twitterLen($content) <= $twitterMaxLen)
+        $tokens = tokenize($content);
+        if ($tokens->totalLength() <= MAX_LEN)
             return $content;
-        $content = twitterElideTo($content, $twitterMaxLen - 1 - $twitterUrlLen);
-        return "$content $url";
+        $status = $tokens->elideTo(MAX_LEN - 1 - URL_LEN);
+        return $tokens->toString() . " $url";
     }
 }
 
