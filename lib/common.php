@@ -115,6 +115,7 @@ function getPost($mf) {
         "contentValue" => mfpath($e, "content/value/1"),
         "url" => mfpath($e, "url/1"),
         "in-reply-to" => mfpath($e, "in-reply-to/1"),
+        "syndication" => mfpath($e, "syndication"),
     );
     $post["type"] = ($post["name"] === $post["contentValue"]) 
         ? "note" : "article";

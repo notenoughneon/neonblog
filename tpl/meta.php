@@ -6,4 +6,7 @@
                 <? if (isset($post["in-reply-to"])) { ?>
                 <br>In reply to: <a class="u-in-reply-to" href="<? echo $post["in-reply-to"] ?>"><? echo $post["in-reply-to"] ?></a>
                 <? } ?>
+                <? foreach ($post["syndication"] as $syndicated) { ?>
+                <br>Syndicated to: <a class="u-syndication" href="<? echo $syndicated ?>"><? echo $syndicated ?></a>
+                <? } ?>
               </p>
