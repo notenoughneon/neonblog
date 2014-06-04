@@ -18,7 +18,7 @@ require("tpl/header.php");
                 </div>
 
                 <div class="form-group">
-                    <label for="reply-to" class="col-sm-2 control-label">Reply to:</label>
+                    <label for="reply-to" class="col-sm-2 control-label">Reply&nbsp;to:</label>
                     <div class="col-sm-10">
                         <input id="reply-to" name="in-reply-to" type="text" class="form-control" placeholder="http://example.com/post-id" />
                     </div>
@@ -28,6 +28,14 @@ require("tpl/header.php");
                     <label for="content" class="col-sm-2 control-label">Content:</label>
                     <div class="col-sm-10">
                         <textarea id="content" name="content" class="form-control" rows="8"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Syndicate&nbsp;to:</label>
+                    <div class="col-sm-10">
+                        <input id="twitter" name="syndicate-to" type="checkbox" value="twitter.com" />
+                        <label for="twitter">Twitter</label>
                     </div>
                 </div>
 

@@ -11,7 +11,7 @@ function appendElement($parent, $tag, $attrs = array(), $text = null) {
     return $elt;
 }
 
-function createArticle($cfg, $slug, $replyto, $name, $published, $content) {
+function createArticle($cfg, $slug, $replyto, $name, $published, $content, $syndication) {
     $relativeUrl = $cfg["postRoot"] . "/" . $slug;
     $filename =  $relativeUrl . $cfg["postExtension"];
 
@@ -48,13 +48,19 @@ function createArticle($cfg, $slug, $replyto, $name, $published, $content) {
         "class" => "u-url",
         "href" => $relativeUrl));
 
+    foreach ($syndication as $syndicated) {
+        appendElement($hentry, "a", array(
+            "class" => "u-syndication",
+            "href" => $syndicated));
+    }
+
     if (!$doc->saveHTMLFile($filename))
         throw new Exception("Failed to write to $filename");
 
     return $cfg["siteUrl"] . "/" . $relativeUrl;
 }
 
-function createNote($cfg, $slug, $replyto, $published, $content) {
+function createNote($cfg, $slug, $replyto, $published, $content, $syndication) {
     $relativeUrl = $cfg["postRoot"] . "/" . $slug;
     $filename =  $relativeUrl . $cfg["postExtension"];
 
@@ -86,6 +92,12 @@ function createNote($cfg, $slug, $replyto, $published, $content) {
     $uurl = appendElement($hentry, "a", array(
         "class" => "u-url",
         "href" => $relativeUrl));
+
+    foreach ($syndication as $syndicated) {
+        appendElement($hentry, "a", array(
+            "class" => "u-syndication",
+            "href" => $syndicated));
+    }
 
     if (!$doc->saveHTMLFile($filename))
         throw new Exception("Failed to write to $filename");
