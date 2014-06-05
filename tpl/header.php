@@ -25,6 +25,7 @@
 
     <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
+            <a class="navbar-brand" href="/"><? echo $config["siteTitle"] ?></a>
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
@@ -56,10 +57,6 @@
     </div>
 
     <div class="container">
-
-      <div class="blog-header">
-          <h1 class="blog-title"><a href="<? echo $config["siteUrl"] ?>"><? echo $config["siteTitle"] ?></a></h1>
-      </div>
 
       <div class="row">
 

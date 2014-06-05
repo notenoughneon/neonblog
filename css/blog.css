@@ -21,6 +21,11 @@ h6, .h6 {
   color: #333;
 }
 
+.navbar-brand {
+  font-family: Dosis, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18pt;
+}
+
 h1 a,
 h1 a:hover {
   color: #333;
