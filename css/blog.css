@@ -37,10 +37,6 @@ h1 a:hover {
     max-width: 100%;
 }
 
-.h-cite {
-    background: #eeeeee;
-}
-
 .h-card img {
   float: left;
   width: 48px;
@@ -179,6 +175,9 @@ h1 a:hover {
 .blog-post {
   margin-bottom: 60px;
 }
+.h-cite .blog-post {
+  margin-bottom: 20px;
+}
 .blog-post-title {
   margin-bottom: 5px;
   font-size: 30px;
@@ -188,6 +187,11 @@ h1 a:hover {
   margin-bottom: 0px;
   color: #999;
 }
+.blog-post-meta .p-author {
+    font-weight: bold;
+    color: #777;
+}
+
 .blog-post-meta a,
 .blog-post-meta time {
   color: #999;
