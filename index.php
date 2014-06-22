@@ -1,32 +1,34 @@
 <?php
 require("lib/common.php");
-require("Mf2/Parser.php");
+require("lib/microformat.php");
 
-$postIndex = generatePostIndex($config);
+$o = 0;
+$l = $config["postsPerPage"];
+if (isset($_GET["o"])) $o = $_GET["o"];
+if (isset($_GET["l"])) $l = $_GET["l"];
 
-if (isset($_GET["p"])) {
-    $p = $_GET["p"];
-    if (!isset($postIndex[$p]))
-        do404($p);
-    $mf2 = Mf2\parse(file_get_contents($postIndex[$p]));
-    $post = getPost($mf2);
-    require("tpl/post.php");
-    exit();
-} else {
-    $o = 0;
-    $l = $config["postsPerPage"];
-    if (isset($_GET["o"])) $o = $_GET["o"];
-    if (isset($_GET["l"])) $l = $_GET["l"];
-    $posts = array();
-    foreach(array_slice($postIndex, $o, $l) as $filename) {
-        $posts[] = getPost(Mf2\parse(file_get_contents($filename)));
-    }
-    if (($o + $l) >= count($postIndex)) $prevUrl = null;
-    else $prevUrl = "?o=" . ($o + $l) . "&l=" . $l;
-    if ($o <= 0) $nextUrl = null;
-    else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l;
-    require("tpl/index.php");
-    exit();
+$title = $config["siteTitle"];
+
+require("tpl/header.php");
+
+$feed = new Microformat\Localfeed("postindex.json");
+foreach ($feed->getRange($o, $l) as $post) {
+    echo $post->toHtmlSummary();
 }
 
+if (($o + $l) >= $feed->count()) $prevUrl = null;
+else $prevUrl = "?o=" . ($o + $l) . "&l=" . $l;
+if ($o <= 0) $nextUrl = null;
+else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l;
+
+?>
+          <ul class="pager">
+            <? if ($prevUrl != null) { ?>
+            <li><a href="<? echo $prevUrl ?>">Previous</a></li>
+            <? } if ($nextUrl != null) { ?>
+            <li><a href="<? echo $nextUrl ?>">Next</a></li>
+            <? } ?>
+          </ul>
+<?
+require("tpl/footer.php");
 ?>
