@@ -268,7 +268,8 @@ class Entry {
     }
 
     public function isArticle() {
-        return isset($this->name) && $this->name != $this->contentValue;
+        return isset($this->name) && $this->name != $this->contentValue
+            && count(array_merge($this->replyTo, $this->repostOf, $this->likeOf)) == 0;
     }
 
     public function isPhoto() {
