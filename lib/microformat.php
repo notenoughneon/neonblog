@@ -96,11 +96,10 @@ class LocalFeed extends Feed {
         $this->indexStore->sync();
     }
 
-    public function add($file) {
+    public function add($post) {
         $post = new Entry();
-        $post->loadFromFile($file);
         $this->indexStore->value[] = array(
-            "file" => $file,
+            "file" => $post->file,
             "url" => $post->url,
             "date" => strtotime($post->published),
         );
@@ -261,15 +260,28 @@ class Entry {
         return $html;
     }
 
+    public function references() {
+        return array_map(function($e) {return $e->url;},
+            array_merge($this->replyTo, $this->repostOf, $this->likeOf));
+    }
+
     public function isReplyTo($url) {
-        return in_array($url, array_map(
-            function($e) { return $e->url; },
-            array_merge($this->replyTo, $this->repostOf, $this->likeOf)));
+        return in_array($url, $this->references());
     }
 
     public function isArticle() {
         return isset($this->name) && $this->name != $this->contentValue
-            && count(array_merge($this->replyTo, $this->repostOf, $this->likeOf)) == 0;
+            && count($this->references()) == 0;
+    }
+
+    public function getLinks() {
+        $links = $this->references();
+        $doc = new DOMDocument();
+        if (!@$doc->loadHTML($this->contentHtml))
+            return $links;
+        foreach ($doc->getElementsByTagName("a") as $a)
+            $links[] = $a->getAttribute("href");
+        return $links;
     }
 
     public function isPhoto() {

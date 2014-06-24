@@ -1,19 +1,17 @@
 <?php
 require("lib/common.php");
+require("lib/microformat.php");
 require("lib/auth.php");
-require("lib/dom.php");
 require("lib/webmention.php");
-require("lib/twitter.php");
-require("twitteroauth/twitteroauth.php");
 
-function links($html) {
-    $links = array();
-    $doc = new DOMDocument();
-    if (!@$doc->loadHTML($html))
-        return $links;
-    foreach ($doc->getElementsByTagName("a") as $a)
-        $links[] = $a->getAttribute("href");
-    return $links;
+function generateSlug($name, $published) {
+    $datepart = date("YmdHi", strtotime($published));
+    if ($name == null)
+        return $datepart;
+    $namepart = strtolower($name);
+    $namepart = preg_replace("/[^a-z0-9 ]+/", "", $namepart);
+    $namepart = preg_replace("/ +", "-", $namepart);
+    return "$datepart-$namepart";
 }
 
 requireAuthorization($config, "post");
@@ -21,48 +19,38 @@ requireAuthorization($config, "post");
 $h = getRequiredPost("h");
 if ($h !== "entry")
     do400("Unsupported object type: '$h'");
-$name = getOptionalPost("name");
+
+$feed = new Microformat\LocalFeed("postindex.json");
+$post = new Microformat\Entry();
+$post->name = getOptionalPost("name");
+$post->content = getOptionalPost("content");
+$post->published = getOptionalPost("published");
+if ($post->published === null)
+    $post->published = date("c");
+
 $replyto = getOptionalPost("in-reply-to");
-$content = getOptionalPost("content");
-$published = getOptionalPost("published");
-if ($published === null)
-    $published = date("c");
-$syndicateto = getOptionalPost("syndicate-to");
+
+$slug = generateSlug($name, $published);
+$filebase = $config["postRoot"] . "/" . $slug;
+$post->file = $filebase . $config["postExtension"];
+$post->url = $config["siteUrl"] . "/" . $post->file;
+
 $photo = getOptionalFile("photo");
 if ($content === null && $photo === null)
     do400("Either content or photo must be set");
-$slug = generateSlug($name, $published);
+if ($photo !== null) {
+    $photoFile = $filebase . ".jpg";
+    if (!move_uploaded_file($photo["tmp_name"], $photoFile))
+        throw new Exception("Failed to move upload to $photoFile");
+    $post->content = "<img class=\"u-photo\" src=\"" . $photoFile . "\">" . $post->content;
+}
 
 try {
-    $syndication = array();
-    if ($syndicateto == "twitter.com") {
-        $url = $config["siteUrl"] . "/" . $config["postRoot"] . "/" . $slug;
-        $tweet = TwitterElide\format($name, $content, $url);
-        $keys = $config["twitter"];
-        $twitter = new TwitterOAuth($keys["apiKey"],
-                                    $keys["apiSecret"],
-                                    $keys["accessToken"],
-                                    $keys["accessSecret"]);
-        echo "Sending tweet...<br>";
-        $response = $twitter->post("statuses/update", array("status" => $tweet));
-        $tweetUrl = "https://twitter.com/" . $response->user->screen_name . "/status/" . $response->id_str;
-        echo "Success: location = $tweetUrl";
-        $syndication[] = $tweetUrl;
-    }
-
-    if ($photo !== null)
-        $location = createPhoto($config, $slug, $published, $photo, $content);
-    else if ($name === null)
-        $location = createNote($config, $slug, $replyto, $published, $content, $syndication);
-    else
-        $location = createArticle($config, $slug, $replyto, $name, $published, $content, $syndication);
+    $post->save($config);
+    $feed->add($post);
+    $location = $post->url;
     do201($location);
-    $links = array();
-    if ($replyto !== null)
-        $links[] = $replyto;
-    if ($content !== null)
-        $links = array_merge($links, links($content));
-    foreach ($links as $link) {
+    foreach ($post->getLinks() as $link) {
         try {
             echo "Sending webmention: $location -&gt; $link<br>";
             sendmention($location, $link);
