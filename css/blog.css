@@ -21,9 +21,10 @@ h6, .h6 {
   color: #333;
 }
 
-.navbar-brand {
+.navbar .navbar-brand {
   font-family: Dosis, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 18pt;
+  color: #bbb;
 }
 
 h1 a,
@@ -43,6 +44,7 @@ h1 a:hover {
   height: 48px;
   border-radius: 5px;
   margin-right: 20px;
+  margin-bottom: 10px;
 }
 
 
@@ -129,7 +131,7 @@ h1 a:hover {
  */
 
 .blog-main {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.5;
 }
 
@@ -180,7 +182,7 @@ h1 a:hover {
 }
 .blog-post-title {
   margin-bottom: 5px;
-  font-size: 30px;
+  font-size: 25px;
 }
 .blog-post-meta {
   /* margin-bottom: 20px; */
