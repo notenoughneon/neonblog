@@ -22,27 +22,36 @@ if ($h !== "entry")
 
 $feed = new Microformat\LocalFeed("postindex.json");
 $post = new Microformat\Entry();
+$post->authorName = $config["aboutName"];
+$post->authorPhoto = $config["aboutPhoto"];
+$post->authorUrl = $config["siteUrl"];
 $post->name = getOptionalPost("name");
-$post->content = getOptionalPost("content");
+$post->contentHtml = getOptionalPost("content");
+$post->contentValue = $post->contentHtml;
 $post->published = getOptionalPost("published");
 if ($post->published === null)
     $post->published = date("c");
 
 $replyto = getOptionalPost("in-reply-to");
+if ($replyto != null) {
+    $html = fetchPage($replyto);
+    $replyCite = new Microformat\Entry("cite", array("in-reply-to"));
+    $replyCite->loadFromHtml($html, $replyto);
+    $post->replyTo[] = $replyCite;
+}
 
-$slug = generateSlug($name, $published);
-$filebase = $config["postRoot"] . "/" . $slug;
-$post->file = $filebase . $config["postExtension"];
-$post->url = $config["siteUrl"] . "/" . $post->file;
+$slug = $config["postRoot"] . "/" . generateSlug($post->name, $post->published);
+$post->file = $slug . $config["postExtension"];
+$post->url = $config["siteUrl"] . "/" . $slug;
 
 $photo = getOptionalFile("photo");
-if ($content === null && $photo === null)
+if ($post->contentValue === null && $photo === null)
     do400("Either content or photo must be set");
 if ($photo !== null) {
-    $photoFile = $filebase . ".jpg";
+    $photoFile = $slug . ".jpg";
     if (!move_uploaded_file($photo["tmp_name"], $photoFile))
         throw new Exception("Failed to move upload to $photoFile");
-    $post->content = "<img class=\"u-photo\" src=\"" . $photoFile . "\">" . $post->content;
+    $post->contentHtml = "<img class=\"u-photo\" src=\"" . $photoFile . "\">" . $post->contentHtml;
 }
 
 try {

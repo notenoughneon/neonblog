@@ -97,7 +97,6 @@ class LocalFeed extends Feed {
     }
 
     public function add($post) {
-        $post = new Entry();
         $this->indexStore->value[] = array(
             "file" => $post->file,
             "url" => $post->url,
@@ -276,7 +275,7 @@ class Entry {
 
     public function getLinks() {
         $links = $this->references();
-        $doc = new DOMDocument();
+        $doc = new \DOMDocument();
         if (!@$doc->loadHTML($this->contentHtml))
             return $links;
         foreach ($doc->getElementsByTagName("a") as $a)
