@@ -1,4 +1,4 @@
-Options -Indexes
+Options -Indexes +MultiViews
 RewriteEngine on
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
 <Files "processqueue.php">
