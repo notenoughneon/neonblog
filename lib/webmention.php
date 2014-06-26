@@ -1,10 +1,9 @@
 <?php
 
 function discoverWebmention($target) {
-    $urlparts = parse_url($target);
     $ch = curl_init();
     curl_setopt_array($ch, array(
-        CURLOPT_URL => $urlparts["host"],
+        CURLOPT_URL => $target,
         CURLOPT_HEADER => true,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_FOLLOWLOCATION => true,
@@ -18,7 +17,7 @@ function discoverWebmention($target) {
     }
     curl_close($ch);
     //TODO: check Link header
-    //list($headers, $body) = explode("\r\n\r\n", $response, 2);
+    list($headers, $body) = explode("\r\n\r\n", $response, 2);
     //array_filter(explode("\r\n", $headers), 
     //    function($e) { return startsWith($e, "Link: "); });
 
@@ -57,6 +56,7 @@ function sendMention($source, $target) {
     curl_close($ch);
     if (!($httpcode == 200 || $httpcode == 202))
         throw new Exception("Bad http code: $httpcode");
+    return $page;
 }
 
 ?>
