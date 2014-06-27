@@ -59,7 +59,13 @@ try {
     $feed->add($post);
     $location = $post->url;
     do201($location);
-    foreach ($post->getLinks() as $link) {
+    $links = $post->getLinks();
+    $syndications = getOptionalPost("syndicate-to");
+    if (in_array("twitter.com", $syndications))
+        $links[] = "http://brid.gy/publish/twitter";
+    if (in_array("facebook.com", $syndications))
+        $links[] = "http://brid.gy/publish/facebook";
+    foreach ($links as $link) {
         try {
             echo "Sending webmention: $location -&gt; $link<br>";
             sendmention($location, $link);

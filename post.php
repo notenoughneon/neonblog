@@ -34,8 +34,11 @@ require("tpl/header.php");
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Syndicate&nbsp;to:</label>
                     <div class="col-sm-10">
-                        <input id="twitter" name="syndicate-to" type="checkbox" value="twitter.com" />
+                        <input id="twitter" name="syndicate-to[]" type="checkbox" value="twitter.com" />
                         <label for="twitter">Twitter</label>
+
+                        <input id="facebook" name="syndicate-to[]" type="checkbox" value="facebook.com" />
+                        <label for="facebook">Facebook</label>
                     </div>
                 </div>
 
