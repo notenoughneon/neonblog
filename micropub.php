@@ -26,8 +26,9 @@ $post->authorName = $config["aboutName"];
 $post->authorPhoto = $config["aboutPhoto"];
 $post->authorUrl = $config["siteUrl"];
 $post->name = getOptionalPost("name");
-$post->contentHtml = getOptionalPost("content");
-$post->contentValue = $post->contentHtml;
+$content = getOptionalPost("content");
+$post->contentHtml = htmlspecialchars($content);
+$post->contentValue = $content;
 $post->published = getOptionalPost("published");
 if ($post->published === null)
     $post->published = date("c");
@@ -51,7 +52,7 @@ if ($photo !== null) {
     $photoFile = $slug . ".jpg";
     if (!move_uploaded_file($photo["tmp_name"], $photoFile))
         throw new Exception("Failed to move upload to $photoFile");
-    $post->contentHtml = "<img class=\"u-photo\" src=\"" . $photoFile . "\">" . $post->contentHtml;
+    $post->contentHtml = "<img class=\"u-photo\" src=\"/" . $photoFile . "\">" . $post->contentHtml;
 }
 
 try {
@@ -61,10 +62,12 @@ try {
     do201($location);
     $links = $post->getLinks();
     $syndications = getOptionalPost("syndicate-to");
-    if (in_array("twitter.com", $syndications))
-        $links[] = "http://brid.gy/publish/twitter";
-    if (in_array("facebook.com", $syndications))
-        $links[] = "http://brid.gy/publish/facebook";
+    if (isset($syndications)) {
+        if (in_array("twitter.com", $syndications))
+            $links[] = "http://brid.gy/publish/twitter";
+        if (in_array("facebook.com", $syndications))
+            $links[] = "http://brid.gy/publish/facebook";
+    }
     foreach ($links as $link) {
         try {
             echo "Sending webmention: $location -&gt; $link<br>";
