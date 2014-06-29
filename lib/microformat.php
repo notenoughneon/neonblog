@@ -48,6 +48,7 @@ function mfpath($mf, $path) {
 
 abstract class Feed {
     abstract public function getRange($offset, $limit);
+    abstract public function search($query);
 }
 
 class LocalFeed extends Feed {
@@ -118,6 +119,15 @@ class LocalFeed extends Feed {
     public function getAll() {
         return array_map(array($this, "loadIndexEntry"),
             $this->indexStore->value);
+    }
+
+    public function search($query) {
+        return array_filter($this->getAll(),
+            function($e) use($query) {
+                return stripos($e->name, $query) !== false
+                    || stripos($e->contentValue, $query) !== false;
+            }
+        );
     }
 
     public function getByUrl($url) {
@@ -242,6 +252,35 @@ class Entry {
         } else {
             require("tpl/entry.php");
         }
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
+    public function highlight($query) {
+        $content = $this->contentValue;
+        $len = 128;
+        $i = stripos($content, $query);
+        if ($i === false)
+            $i = 0;
+        $start = max($i - $len + strlen($query)/2, 0);
+        $end = $start + 2*$len;
+        $elided = substr($content, 0, $i)
+            . "<mark>"
+            . substr($content, $i, strlen($query))
+            . "</mark>"
+            . substr($content, $i + strlen($query));
+        $elided = substr($elided, $start, 2*$len);
+        if ($start > 0)
+            $elided = "..." . $elided;
+        if ($end < strlen($content))
+            $elided = $elided . "...";
+        return $elided;
+    }
+
+    public function toSearchHit($query) {
+        ob_start();
+        require("tpl/entry-searchhit.php");
         $html = ob_get_contents();
         ob_end_clean();
         return $html;

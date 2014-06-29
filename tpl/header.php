@@ -52,6 +52,9 @@
                     <button type="submit" class="btn">Sign out</button>
                 </form>
                 <? } ?>
+                <form class="navbar-form navbar-right" role="search" action="/search.php" method="get">
+                    <input type="text" class="form-control" placeholder="Search" name="q">
+                </form>
             </div>
         </div>
     </div>
