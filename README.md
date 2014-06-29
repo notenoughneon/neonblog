@@ -6,11 +6,12 @@ Experimental indieweb blogging platform
 Features
 --------
 
-* Microformats2 markup of content
-* Post types: "article", "note", and "photo"
-* Send and receive webmentions
+* Post articles, notes, and photos
+* Send and receive replies via webmention
+* POSSE and receive backfeeds from twitter, facebook (via bridgy)
 * Micropub endpoint
-* No SQL database -- posts are stored in html with microformats2
+* Responsive bootstrap theme
+* No SQL database -- content is stored in html
 
 Installation
 ------------
@@ -21,11 +22,11 @@ Requirements:
 * mod_rewrite
 * PHP-Mf2
 
-All configurable parameters are in `config.json`. It relies on IndieAuth for authentication, so you must set at least one IndieAuth compatible rel-me link. Posts are stored as html fragments in `p`. Posting order is defined by lexicographic
-order of the filenames. This may change in the future to reflect the `published` date parsed from the files.
+All configurable parameters are in `config.json`. At a minimum, you will need to set your site URL and title, your name and photo, and at least one IndieAuth compatible rel-me link.
 
-Received webmentions are queued in the file `webmentions.json`. To process the queue, manually run
-`php -f processqueue.php`, or run it periodically from cron.
+Neonblog stores posts directly on the filesystem and needs write access to its directory. If your web host runs php as a cgi with your userid, this should just work.
+
+Received webmentions are queued in the file `webmentions.json`. To process the queue, manually run `php -f processqueue.php`, or automate it as a cron job.
 
 TODO
 ----
@@ -34,13 +35,18 @@ TODO
 * ~~Posting UI~~
 * ~~Micropub~~
 * ~~Sending webmentions~~
-* Reply contexts
-* POSSE
-  * twitter
+* ~~Reply contexts~~
+* ~~POSSE~~
+  * ~~twitter~~
+  * ~~facebook~~
+  * soundcloud
 * https support
-* post formatting (linebreaks, url auto-linking)
+* post formatting
+  * ~~linebreaks~~
+  * url auto-linking
 * comment approval UI
-* caching
+* feed reader
+* search
 
 License
 -------
