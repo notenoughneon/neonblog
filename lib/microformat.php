@@ -47,15 +47,73 @@ function mfpath($mf, $path) {
 }
 
 abstract class Feed {
-    abstract public function getRange($offset, $limit);
-    abstract public function search($query);
+    public function __construct($indexFile) {
+        $this->index = new \Jsonstore($indexFile);
+    }
+
+    public static function indexDateCmp($a, $b) {
+        return $b["date"] - $a["date"];
+    }
+
+    public function loadIndexEntry($i) {
+        $e = new Entry();
+        $e->loadFromFile($i["file"], $i["url"]);
+        return $e;
+    }
+
+    public function count() {
+        return count($this->index->value);
+    }
+
+    public function getRange($offset, $limit) {
+        return array_map(array($this,"loadIndexEntry"),
+            array_slice($this->index->value, $offset, $limit));
+    }
+
+    public function getAll() {
+        return array_map(array($this,"loadIndexEntry"),
+            $this->index->value);
+    }
+
+    public function search($query) {
+        return array_filter($this->getAll(),
+            function($e) use($query) {
+                return stripos($e->name, $query) !== false
+                    || stripos($e->contentValue, $query) !== false;
+            }
+        );
+    }
+
+}
+
+class RemoteFeed extends Feed {
+    public function reload($cacheRoot, $url) {
+        $html = fetchPage($url);
+        $mf = \Mf2\parse($html, $url);
+        $feed = mftype($mf, "h-feed");
+        if (count($feed) > 0)
+            $elts = mfpath($feed, "children");
+        else
+            $elts = mftype($mf, "h-entry");
+        //$this->index->value = array();
+        foreach ($elts as $elt) {
+            $postUrl = mfpath(array($elt), "url/1");
+            $postPublished = mfpath(array($elt), "published/1");
+            $postHtml = fetchPage($postUrl);
+            $file = $cacheRoot . "/" . md5($postUrl);
+            file_put_contents($file, $postHtml);
+            $this->index->value[] = array(
+                "file" => $file,
+                "url" => $postUrl,
+                "date" => strtotime($postPublished),
+            );
+        }
+        usort($this->index->value, "parent::indexDateCmp");
+        $this->index->sync();
+    }
 }
 
 class LocalFeed extends Feed {
-    public function __construct($indexFile) {
-        $this->indexStore = new \Jsonstore($indexFile);
-    }
-
     private static function walkDir($path = ".") {
         $paths = array();
         $dir = opendir($path);
@@ -71,72 +129,39 @@ class LocalFeed extends Feed {
         return $paths;
     }
 
-    private static function indexDateCmp($a, $b) {
-        return $b["date"] - $a["date"];
-    }
-
-    private static function loadIndexEntry($i) {
-        $e = new Entry();
-        $e->loadFromFile($i["file"]);
-        return $e;
-    }
-
     public function reload($regex) {
-        $this->indexStore->value = array();
+        $this->index->value = array();
         foreach (array_filter($this->walkDir(), function($e) use($regex) {
             return preg_match($regex, $e); }) as $file) {
             $post = new Entry();
             $post->loadFromFile($file);
-            $this->indexStore->value[] = array(
+            $this->index->value[] = array(
                 "file" => $file,
                 "url" => $post->url,
                 "date" => strtotime($post->published),
             );
         }
-        usort($this->indexStore->value, array($this, "indexDateCmp"));
-        $this->indexStore->sync();
+        usort($this->index->value, "parent::indexDateCmp");
+        $this->index->sync();
     }
 
     public function add($post) {
-        $this->indexStore->value[] = array(
+        $this->index->value[] = array(
             "file" => $post->file,
             "url" => $post->url,
             "date" => strtotime($post->published),
         );
-        usort($this->indexStore->value, array($this, "indexDateCmp"));
-        $this->indexStore->sync();
-    }
-
-    public function count() {
-        return count($this->indexStore->value);
-    }
-
-    public function getRange($offset, $limit) {
-        return array_map(array($this, "loadIndexEntry"),
-            array_slice($this->indexStore->value, $offset, $limit));
-    }
-
-    public function getAll() {
-        return array_map(array($this, "loadIndexEntry"),
-            $this->indexStore->value);
-    }
-
-    public function search($query) {
-        return array_filter($this->getAll(),
-            function($e) use($query) {
-                return stripos($e->name, $query) !== false
-                    || stripos($e->contentValue, $query) !== false;
-            }
-        );
+        usort($this->index->value, "parent::indexDateCmp");
+        $this->index->sync();
     }
 
     public function getByUrl($url) {
-        $posts = array_filter($this->indexStore->value,
+        $posts = array_filter($this->index->value,
             function($e) use($url) { return $e["url"] == $url; });
         $count = count($posts);
         if ($count != 1)
             throw new \Exception("Found $count entries matching $url");
-        return $this->loadIndexEntry(array_shift($posts));
+        return parent::loadIndexEntry(array_shift($posts));
     }
 }
 
@@ -170,9 +195,9 @@ class Entry {
         return $this->loadFromMf(mftype($mf, "h-entry"));
     }
 
-    public function loadFromFile($file) {
+    public function loadFromFile($file, $url = null) {
         $this->file = $file;
-        $mf = \Mf2\parse(file_get_contents($file));
+        $mf = \Mf2\parse(file_get_contents($file), $url);
         return $this->loadFromMf(mftype($mf, "h-entry"));
     }
 
