@@ -1,15 +1,16 @@
 <?php
 require("lib/common.php");
-
-function isTargetValid($cfg, $target) {
-    return array_key_exists(urlToLocal($cfg, $target), generatePostIndex($cfg));
-}
+require("lib/microformat.php");
 
 $source = getRequiredPost("source");
 $target = getRequiredPost("target");
 
-if (!isTargetValid($config, $target))
+try {
+    $feed = new Microformat\Localfeed("postindex.json");
+    $feed->getByUrl($target);
+} catch (Exception $e) {
     do400("$target isn't a valid target");
+}
 
 try {
     $mentionstore = new JsonStore($config["webmentionFile"]);

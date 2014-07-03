@@ -84,6 +84,14 @@ abstract class Feed {
         );
     }
 
+    public function getByUrl($url) {
+        $posts = array_filter($this->index->value,
+            function($e) use($url) { return $e["url"] == $url; });
+        $count = count($posts);
+        if ($count != 1)
+            throw new \Exception("Found $count entries matching $url");
+        return $this->loadIndexEntry(array_shift($posts));
+    }
 }
 
 class RemoteFeed extends Feed {
@@ -95,7 +103,7 @@ class RemoteFeed extends Feed {
             $elts = mfpath($feed, "children");
         else
             $elts = mftype($mf, "h-entry");
-        //$this->index->value = array();
+        $this->index->value = array();
         foreach ($elts as $elt) {
             $postUrl = mfpath(array($elt), "url/1");
             $postPublished = mfpath(array($elt), "published/1");
@@ -155,14 +163,6 @@ class LocalFeed extends Feed {
         $this->index->sync();
     }
 
-    public function getByUrl($url) {
-        $posts = array_filter($this->index->value,
-            function($e) use($url) { return $e["url"] == $url; });
-        $count = count($posts);
-        if ($count != 1)
-            throw new \Exception("Found $count entries matching $url");
-        return parent::loadIndexEntry(array_shift($posts));
-    }
 }
 
 
