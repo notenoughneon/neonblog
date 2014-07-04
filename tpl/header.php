@@ -16,9 +16,6 @@
     <link href="https://indieauth.com/auth" rel="authorization_endpoint">
     <link href="<? echo $config["siteUrl"] . "/token.php" ?>" rel="token_endpoint">
     <link href="<? echo $config["siteUrl"] . "/micropub.php" ?>" rel="micropub">
-    <script type="text/javascript" src="/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-
   </head>
 
   <body>
