@@ -285,15 +285,18 @@ class Entry {
     public function highlight($content, $query) {
         $len = 128;
         $i = stripos($content, $query);
-        if ($i === false)
+        if ($i !== false) {
+            $elided = substr($content, 0, $i)
+                . "<mark>"
+                . substr($content, $i, strlen($query))
+                . "</mark>"
+                . substr($content, $i + strlen($query));
+        } else {
             $i = 0;
+            $elided = $content;
+        }
         $start = max($i - $len + strlen($query)/2, 0);
         $end = $start + 2*$len;
-        $elided = substr($content, 0, $i)
-            . "<mark>"
-            . substr($content, $i, strlen($query))
-            . "</mark>"
-            . substr($content, $i + strlen($query));
         $elided = substr($elided, $start, 2*$len);
         if ($start > 0)
             $elided = "..." . $elided;
