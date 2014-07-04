@@ -11,6 +11,12 @@ $title = $config["siteTitle"];
 
 require("tpl/header.php");
 
+?>
+
+<div class="h-feed">
+
+<?
+
 $feed = new Microformat\Localfeed("postindex.json");
 foreach ($feed->getRange($o, $l) as $post) {
     echo $post->toHtmlSummary();
@@ -24,11 +30,15 @@ else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l;
 ?>
           <ul class="pager">
             <? if ($prevUrl != null) { ?>
-            <li><a href="<? echo $prevUrl ?>">Previous</a></li>
+            <li><a href="<? echo $prevUrl ?>" rel="previous">Previous</a></li>
             <? } if ($nextUrl != null) { ?>
-            <li><a href="<? echo $nextUrl ?>">Next</a></li>
+            <li><a href="<? echo $nextUrl ?>" rel="next">Next</a></li>
             <? } ?>
           </ul>
+
+</div> <!-- /h-feed -->
+
 <?
+
 require("tpl/footer.php");
 ?>
