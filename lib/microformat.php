@@ -265,7 +265,7 @@ class Entry {
 
     public function getContentClass() {
         $class = "e-content";
-        if ($this->isNote())
+        if (!$this->isArticle())
             $class .= " p-name note-content";
         return $class;
     }
@@ -335,10 +335,6 @@ class Entry {
     public function isArticle() {
         return isset($this->name) && $this->name != $this->contentValue
             && count($this->references()) == 0;
-    }
-
-    public function isNote() {
-        return !$this->isArticle() && !$this->isPhoto();
     }
 
     public function getLinks() {
