@@ -22,8 +22,8 @@ if ($h !== "entry")
 
 $feed = new Microformat\LocalFeed("postindex.json");
 $post = new Microformat\Entry();
-$post->authorName = $config["aboutName"];
-$post->authorPhoto = $config["aboutPhoto"];
+$post->authorName = $config["authorName"];
+$post->authorPhoto = $config["authorPhoto"];
 $post->authorUrl = $config["siteUrl"];
 $post->name = getOptionalPost("name");
 $content = getOptionalPost("content");
