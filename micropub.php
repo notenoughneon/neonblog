@@ -27,7 +27,7 @@ $post->authorPhoto = $config["aboutPhoto"];
 $post->authorUrl = $config["siteUrl"];
 $post->name = getOptionalPost("name");
 $content = getOptionalPost("content");
-$post->contentHtml = htmlspecialchars($content);
+$post->contentHtml = $content;
 $post->contentValue = $content;
 $post->published = getOptionalPost("published");
 if ($post->published === null)

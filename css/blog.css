@@ -180,8 +180,12 @@ h1 a:hover {
 .h-cite .blog-post {
   margin-bottom: 20px;
 }
-.note-content {
+.e-content {
   white-space: pre-wrap;
+}
+.e-content img {
+    border-radius: 5px;
+    max-width: 100%;
 }
 .blog-post-title {
   margin-bottom: 5px;
