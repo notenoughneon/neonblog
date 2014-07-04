@@ -282,8 +282,7 @@ class Entry {
         return $html;
     }
 
-    public function highlight($query) {
-        $content = $this->contentValue;
+    public function highlight($content, $query) {
         $len = 128;
         $i = stripos($content, $query);
         if ($i === false)
@@ -305,7 +304,7 @@ class Entry {
 
     public function toSearchHit($query) {
         ob_start();
-        require("tpl/entry-searchhit.php");
+        require("tpl/searchhit.php");
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
