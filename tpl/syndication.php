@@ -4,6 +4,10 @@
         $icon = "fa-twitter";
     else if (stripos($syndicated, "facebook.com") !== false)
         $icon = "fa-facebook";
+    else if (stripos($syndicated, "instagram.com") !== false)
+        $icon = "fa-instagram";
+    else if (stripos($syndicated, "tumblr.com") !== false)
+        $icon = "fa-tumblr";
     else
         $icon = "fa-external-link";
 ?>
