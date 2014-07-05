@@ -205,6 +205,14 @@ h1 a:hover {
 .blog-post-meta time {
   color: #999;
 }
+.blog-post-syndication {
+    position: absolute;
+    right: 15px;
+}
+.blog-post-syndication a {
+  margin-left: 10px;
+  color: #ccc;
+}
 .blog-reply {
   margin-bottom: 30px;
 }

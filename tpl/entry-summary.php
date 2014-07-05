@@ -6,8 +6,9 @@
 <? require("meta.php") ?>
         <div class="<? echo $this->getContentClass() ?>"><? echo $this->contentHtml ?></div>
 <?  if (count($this->children) > 0) { ?>
-        <a href="<? echo $this->url ?>">Replies <span class="badge"><? echo count($this->children) ?></span></a>
+        <a href="<? echo $this->url ?>"><i class="fa fa-comment"></i> <? echo count($this->children) ?></a>
 <? } ?>
+<? require("syndication.php") ?>
     </div>
 </div>
 

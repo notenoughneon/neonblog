@@ -16,6 +16,7 @@ foreach ($this->repostOf as $child) {
 <? } ?>
 <? require("meta.php") ?>
         <div class="<? echo $this->getContentClass() ?>"><? echo $this->contentHtml ?></div>
+<? require("syndication.php") ?>
     </div>
 
     <!-- replies -->
