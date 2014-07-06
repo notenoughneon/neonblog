@@ -10,7 +10,7 @@ function generateSlug($name, $published) {
         return $datepart;
     $namepart = strtolower($name);
     $namepart = preg_replace("/[^a-z0-9 ]+/", "", $namepart);
-    $namepart = preg_replace("/ +", "-", $namepart);
+    $namepart = preg_replace("/ +/", "-", $namepart);
     return "$datepart-$namepart";
 }
 
