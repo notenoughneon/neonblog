@@ -33,6 +33,14 @@ $post->published = getOptionalPost("published");
 if ($post->published === null)
     $post->published = date("c");
 
+$syndication = getOptionalPost("syndication");
+if ($syndication !== null) {
+    if (is_array($syndication))
+        $post->syndication = $syndication;
+    else
+        $post->syndication = array($syndication);
+}
+
 $replyto = getOptionalPost("in-reply-to");
 if ($replyto != null) {
     $html = fetchPage($replyto);
@@ -60,15 +68,27 @@ try {
     $feed->add($post);
     $location = $post->url;
     do201($location);
-    $links = $post->getLinks();
-    $syndications = getOptionalPost("syndicate-to");
-    if (isset($syndications)) {
-        if (in_array("twitter.com", $syndications))
-            $links[] = "http://brid.gy/publish/twitter";
-        if (in_array("facebook.com", $syndications))
-            $links[] = "http://brid.gy/publish/facebook";
+    $syndicateTo = getOptionalPost("syndicate-to");
+    if (isset($syndicateTo)) {
+        if (in_array("twitter.com", $syndicateTo)) {
+            echo "POSSEing to twitter via bridgy<br>";
+            $response = json_decode(sendmention($location, "http://brid.gy/publish/twitter"));
+            if ($response === null)
+                throw new Exception("JSON decode failed");
+            $post->syndication[] = $response->url;
+            echo "Success: $response->url<br>";
+        }
+        if (in_array("facebook.com", $syndicateTo)) {
+            echo "POSSEing to facebook via bridgy<br>";
+            $response = json_decode(sendmention($location, "http://brid.gy/publish/facebook"));
+            if ($response === null)
+                throw new Exception("JSON decode failed");
+            $post->syndication[] = $response->url;
+            echo "Success: $response->url<br>";
+        }
+        $post->save($config);
     }
-    foreach ($links as $link) {
+    foreach ($post->getLinks() as $link) {
         try {
             echo "Sending webmention: $location -&gt; $link<br>";
             sendmention($location, $link);

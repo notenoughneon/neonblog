@@ -177,7 +177,7 @@ class Entry {
     public $authorName = null;
     public $authorPhoto = null;
     public $authorUrl = null;
-    public $syndication = null;
+    public $syndication = array();
     public $replyTo = array();
     public $likeOf = array();
     public $repostOf = array();
