@@ -24,9 +24,9 @@ Requirements:
 
 All configurable parameters are in `config.json`. At a minimum, you will need to set your site URL and title, your name and photo, and at least one IndieAuth compatible rel-me link.
 
-Neonblog stores posts directly on the filesystem and needs write access to its directory. If your web host runs php as a cgi with your userid, this should just work.
+Neonblog stores posts directly on the filesystem and needs write access to its directory. If you add/remove posts directly on the filesystem, you will need to regenerate the index by running `php -f regenerate.php`.
 
-Received webmentions are queued in the file `webmentions.json`. To process the queue, manually run `php -f processqueue.php`, or automate it as a cron job.
+Received webmentions can be accepted on the inbox page. To accept everything automatically, run `php -f processqueue.php` as a cron job.
 
 TODO
 ----
@@ -41,12 +41,9 @@ TODO
   * ~~facebook~~
   * soundcloud
 * https support
-* post formatting
-  * ~~linebreaks~~
-  * url auto-linking
-* comment approval UI
+* ~~comment approval UI~~
+* ~~search~~
 * feed reader
-* search
 
 License
 -------
