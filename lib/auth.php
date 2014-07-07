@@ -69,8 +69,7 @@ function getBearerToken() {
     return null;
 }
 
-function isAuthorized($cfg, $scope) {
-    $token = getBearerToken();
+function isAuthorized($cfg, $token, $scope) {
     if ($token === null)
         return false;
     $tokenstore = new JsonStore($cfg["tokenFile"]);
@@ -79,8 +78,10 @@ function isAuthorized($cfg, $scope) {
         && $tokenstore->value[$token]["scope"] === $scope;
 }
 
-function requireAuthorization($cfg, $scope) {
-    if (!isAuthorized($cfg, $scope)) {
+function requireAuthorization($cfg, $scope, $token = null) {
+    if ($token == null)
+        $token = getBearerToken();
+    if (!isAuthorized($cfg, $token, $scope)) {
         header("WWW-Authenticate: Bearer realm=\"$scope\"");
         do401();
     }
