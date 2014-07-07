@@ -14,7 +14,7 @@
         "LinkedIn" : "http://www.linkedin.com/pub/emma-kuo/25/15a/586"},
     "postRoot" : "p",
     "postExtension" : ".html",
-    "postsPerPage" : 20,
+    "postsPerPage" : 10,
     "webmentionFile" : "webmentions.json",
     "webmentionLength" : 50,
     "tokenFile" : "tokens.json",
