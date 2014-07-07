@@ -14,6 +14,10 @@ function generateSlug($name, $published) {
     return "$datepart-$namepart";
 }
 
+function autoLink($content) {
+    return preg_replace("~\b((https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?)\b~i", "<a href=\"$1\">$1</a>", $content);
+}
+
 requireAuthorization($config, "post");
 
 $h = getRequiredPost("h");
@@ -27,6 +31,8 @@ $post->authorPhoto = $config["authorPhoto"];
 $post->authorUrl = $config["siteUrl"];
 $post->name = getOptionalPost("name");
 $content = getOptionalPost("content");
+if ($content !== null)
+    $content = autoLink($content);
 $post->contentHtml = $content;
 $post->contentValue = $content;
 $post->published = getOptionalPost("published");
