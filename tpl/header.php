@@ -44,6 +44,7 @@
                 </form>
                 <? } else { ?>
                 <ul class="nav navbar-nav">
+                    <li><a href="/inbox.php">Inbox</a></li>
                     <li><a href="/post.php">Post</a></li>
                 </ul>
                 <form class="navbar-form navbar-right" role="form" action="/logout.php" method="post">
