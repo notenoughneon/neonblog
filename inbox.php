@@ -31,8 +31,8 @@ if ($sourceUrl !== null && $targetUrl !== null) {
     $webmentions->value = array_values(
         array_filter($webmentions->value,
             function($m) use($sourceUrl, $targetUrl) {
-                return $m["source"] != $sourceUrl
-                    && $m["target"] != $targetUrl;
+                return $m["source"] !== $sourceUrl
+                    || $m["target"] !== $targetUrl;
         }));
     $webmentions->sync();
 
