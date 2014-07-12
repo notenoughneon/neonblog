@@ -3,6 +3,7 @@ require("lib/common.php");
 require("lib/microformat.php");
 require("lib/auth.php");
 require("lib/webmention.php");
+require("lib/posse.php");
 
 function generateSlug($name, $published) {
     $datepart = date("YmdHi", strtotime($published));
@@ -74,26 +75,9 @@ try {
     $feed->add($post);
     $location = $post->url;
     do201($location);
-    $syndicateTo = getOptionalPost("syndicate-to");
-    if (isset($syndicateTo)) {
-        if (in_array("twitter.com", $syndicateTo)) {
-            echo "POSSEing to twitter via bridgy<br>";
-            $response = json_decode(sendmention($location, "http://brid.gy/publish/twitter"));
-            if ($response === null)
-                throw new Exception("JSON decode failed");
-            $post->syndication[] = $response->url;
-            echo "Success: $response->url<br>";
-        }
-        if (in_array("facebook.com", $syndicateTo)) {
-            echo "POSSEing to facebook via bridgy<br>";
-            $response = json_decode(sendmention($location, "http://brid.gy/publish/facebook"));
-            if ($response === null)
-                throw new Exception("JSON decode failed");
-            $post->syndication[] = $response->url;
-            echo "Success: $response->url<br>";
-        }
-        $post->save($config);
-    }
+
+    Posse\posse($config, $post, getOptionalPost("syndicate-to"));
+
     foreach ($post->getLinks() as $link) {
         try {
             echo "Sending webmention: $location -&gt; $link<br>";
