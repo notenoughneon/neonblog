@@ -1,23 +1,6 @@
 <?php
 require_once("jsonstore.php");
 
-function formUrlencode($params) {
-    $pairs = array();
-    foreach ($params as $key => $val) {
-        $pairs[] = urlencode($key) . "=" . urlencode($val);
-    }
-    return implode("&", $pairs);
-}
-
-function formUrldecode($coded) {
-    $decoded = array();
-    foreach (explode("&", $coded) as $pair) {
-        list($key, $val) = explode("=", $pair);
-        $decoded[urldecode($key)] = urldecode($val);
-    }
-    return $decoded;
-}
-
 function indieAuthenticate($params) {
     $verify_url = "https://indieauth.com/auth";
 

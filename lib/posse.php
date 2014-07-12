@@ -20,7 +20,7 @@ function posse($config, $post, $syndicateTos) {
     if ($syndicateTos === null) return;
 
     foreach ($syndicateTos as $syndicateTo) {
-        if (in_array($syndicateTo, $handlers)) {
+        if (array_key_exists($syndicateTo, $handlers)) {
             try {
                 echo "POSSEing to $syndicateTo<br>";
                 $url = $handlers[$syndicateTo]($post);

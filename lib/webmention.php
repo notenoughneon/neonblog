@@ -55,7 +55,7 @@ function sendMention($source, $target) {
     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     if (!($httpcode == 200 || $httpcode == 202))
-        throw new Exception("Bad http code: $httpcode");
+        throw new Exception("Bad http code: $httpcode\n" . $page);
     return $page;
 }
 

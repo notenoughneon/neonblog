@@ -56,6 +56,23 @@ function getOptionalFile($name) {
     return $_FILES[$name];
 }
 
+function formUrlencode($params) {
+    $pairs = array();
+    foreach ($params as $key => $val) {
+        $pairs[] = urlencode($key) . "=" . urlencode($val);
+    }
+    return implode("&", $pairs);
+}
+
+function formUrldecode($coded) {
+    $decoded = array();
+    foreach (explode("&", $coded) as $pair) {
+        list($key, $val) = explode("=", $pair);
+        $decoded[urldecode($key)] = urldecode($val);
+    }
+    return $decoded;
+}
+
 function do201($location = null) {
     header("HTTP/1.1 201 Created");
     if ($location !== null)
