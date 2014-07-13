@@ -51,7 +51,7 @@ if ($syndication !== null) {
 $replyto = getOptionalPost("in-reply-to");
 if ($replyto != null) {
     $html = fetchPage($replyto);
-    $replyCite = new Microformat\Entry("cite", array("in-reply-to"));
+    $replyCite = new Microformat\Cite(array("in-reply-to"));
     $replyCite->loadFromHtml($html, $replyto);
     $post->replyTo[] = $replyCite;
 }

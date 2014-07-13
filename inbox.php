@@ -17,7 +17,7 @@ if ($sourceUrl !== null && $targetUrl !== null) {
     requireAuthorization($config, "post");
 
     $html = fetchPage($sourceUrl);
-    $sourcePost = new Microformat\Entry("cite");
+    $sourcePost = new Microformat\Cite();
     $sourcePost->loadFromHtml($html, $sourceUrl);
     if ($verb != "reject") {
         if ($sourcePost->isReplyTo($targetUrl)) {
@@ -44,10 +44,9 @@ require("tpl/header.php");
 <h1>Inbox</h1>
 <? foreach ($webmentions->value as $mention) {
     $html = fetchPage($mention["source"]);
-    $source = new Microformat\Entry("cite");
+    $source = new Microformat\Cite();
     $source->loadFromHtml($html);
     $target = $feed->getByUrl($mention["target"]);
-    $target->h = "cite";
 ?>
         <div class="row">
             <div><?= $target->toSearchHit("") ?></div>

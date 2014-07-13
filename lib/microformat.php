@@ -182,11 +182,9 @@ class Entry {
     public $likeOf = array();
     public $repostOf = array();
     public $children = array();
-    public $h = "entry";
     public $p = array(); // optional properties, eg. p-in-reply-to
 
-    public function __construct($h = "entry", $p = array()) {
-        $this->h = $h;
+    public function __construct($p = array()) {
         $this->p = $p;
     }
 
@@ -226,7 +224,7 @@ class Entry {
         $this->authorUrl = mfpath($mf, "author/url/1");
         $this->syndication = mfpath($mf, "syndication");
         foreach (mfpath($mf, "in-reply-to") as $elt) {
-            $cite = new Entry("cite", array("in-reply-to"));
+            $cite = new Cite(array("in-reply-to"));
             if (is_array($elt))
                 $cite->loadFromMf(array($elt));
             else
@@ -234,7 +232,7 @@ class Entry {
             $this->replyTo[] = $cite;
         }
         foreach (mfpath($mf, "like-of") as $elt) {
-            $cite = new Entry("cite", array("like-of"));
+            $cite = new Cite(array("like-of"));
             if (is_array($elt))
                 $cite->loadFromMf(array($elt));
             else
@@ -242,7 +240,7 @@ class Entry {
             $this->likeOf[] = $cite;
         }
         foreach (mfpath($mf, "repost-of") as $elt) {
-            $cite = new Entry("cite", array("repost-of"));
+            $cite = new Cite(array("repost-of"));
             if (is_array($elt))
                 $cite->loadFromMf(array($elt));
             else
@@ -250,14 +248,14 @@ class Entry {
             $this->repostOf[] = $cite;
         }
         foreach (mfpath($mf, "children") as $elt) {
-            $cite = new Entry("cite");
+            $cite = new Cite();
             $cite->loadFromMf(array($elt));
             $this->children[] = $cite;
         }
     }
 
     public function getRootClass() {
-        $class = "h-" . $this->h;
+        $class = "h-entry";
         foreach ($this->p as $p)
             $class .= " p-$p";
         return $class;
@@ -272,11 +270,7 @@ class Entry {
 
     public function toHtml() {
         ob_start();
-        if ($this->h == "cite") {
-            require("tpl/cite.php");
-        } else {
-            require("tpl/entry.php");
-        }
+        require("tpl/entry.php");
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
@@ -315,11 +309,7 @@ class Entry {
 
     public function toHtmlSummary() {
         ob_start();
-        if ($this->h == "cite") {
-            require("tpl/cite-summary.php");
-        } else {
-            require("tpl/entry-summary.php");
-        }
+        require("tpl/entry-summary.php");
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
@@ -353,6 +343,31 @@ class Entry {
         return isset($this->photo);
     }
 
+}
+
+class Cite extends Entry {
+    public function getRootClass() {
+        $class = "h-cite";
+        foreach ($this->p as $p)
+            $class .= " p-$p";
+        return $class;
+    }
+
+    public function toHtml() {
+        ob_start();
+        require("tpl/cite.php");
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
+
+    public function toHtmlSummary() {
+        ob_start();
+        require("tpl/cite-summary.php");
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
+    }
 }
 
 ?>

@@ -24,7 +24,7 @@ while (count($mentionstore->value) > 0) {
     echo "Processing $sourceUrl -> $targetUrl\n";
     try {
         $html = fetchPage($sourceUrl);
-        $sourcePost = new Microformat\Entry("cite");
+        $sourcePost = new Microformat\Cite();
         $sourcePost->loadFromHtml($html, $sourceUrl);
         if ($sourcePost->isReplyTo($targetUrl)) {
             echo "\tFound reply\n";
