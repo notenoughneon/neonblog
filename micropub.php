@@ -32,10 +32,9 @@ $post->authorPhoto = $config["authorPhoto"];
 $post->authorUrl = $config["siteUrl"];
 $post->name = getOptionalPost("name");
 $content = getOptionalPost("content");
-if ($content !== null)
-    $content = autoLink($content);
 $post->contentHtml = $content;
-$post->contentValue = $content;
+if ($content !== null && $post->name == null)
+    $post->contentHtml = autolink(htmlspecialchars($post->contentHtml));
 $post->published = getOptionalPost("published");
 if ($post->published === null)
     $post->published = date("c");
@@ -61,7 +60,7 @@ $post->file = $slug . $config["postExtension"];
 $post->url = $config["siteUrl"] . "/" . $slug;
 
 $photo = getOptionalFile("photo");
-if ($post->contentValue === null && $photo === null)
+if ($content === null && $photo === null)
     do400("Either content or photo must be set");
 if ($photo !== null) {
     $photoFile = $slug . ".jpg";

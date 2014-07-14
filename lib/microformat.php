@@ -264,7 +264,7 @@ class Entry {
     public function getContentClass() {
         $class = "e-content";
         if (!$this->isArticle())
-            $class .= " p-name";
+            $class .= " p-name note-content";
         return $class;
     }
 
