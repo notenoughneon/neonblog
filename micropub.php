@@ -71,8 +71,7 @@ if ($photo !== null) {
 
 try {
     $post->save($config);
-    if (!$post->isReply())
-        $feed->add($post);
+    $feed->add($post);
     $location = $post->url;
     do201($location);
 

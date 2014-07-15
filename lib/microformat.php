@@ -143,13 +143,11 @@ class LocalFeed extends Feed {
             return preg_match($regex, $e); }) as $file) {
             $post = new Entry();
             $post->loadFromFile($file);
-            if (!$post->isReply()) {
-                $this->index->value[] = array(
-                    "file" => $file,
-                    "url" => $post->url,
-                    "date" => strtotime($post->published),
-                );
-            }
+            $this->index->value[] = array(
+                "file" => $file,
+                "url" => $post->url,
+                "date" => strtotime($post->published),
+            );
         }
         usort($this->index->value, "parent::indexDateCmp");
         $this->index->sync();
@@ -320,10 +318,6 @@ class Entry {
     public function references() {
         return array_map(function($e) {return $e->url;},
             array_merge($this->replyTo, $this->repostOf, $this->likeOf));
-    }
-
-    public function isReply() {
-        return count($this->references()) > 0;
     }
 
     public function isReplyTo($url) {
