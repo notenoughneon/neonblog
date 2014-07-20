@@ -1,6 +1,6 @@
 {
-    "siteUrl" : "http://notenoughneon.com",
-    "siteTitle" : "Not Enough Neon",
+    "url" : "http://notenoughneon.com",
+    "title" : "Not Enough Neon",
     "authorName" : "Emma Kuo",
     "authorPhoto" : "/m/emma-tw-73.jpeg",
     "authorBlurb" : "Software developer in Portland, OR.",
@@ -12,6 +12,7 @@
         "Facebook" : "https://www.facebook.com/emma.kuo.5209",
         "Github" : "https://github.com/notenoughneon",
         "LinkedIn" : "http://www.linkedin.com/pub/emma-kuo/25/15a/586"},
+    "localIndex" : "postindex.json",
     "postRoot" : "p",
     "postExtension" : ".html",
     "postsPerPage" : 10,

@@ -1,6 +1,5 @@
 <?php
-require("lib/common.php");
-require("lib/microformat.php");
+require("lib/init.php");
 
 function linksTo($html, $url) {
     $doc = new DOMDocument();
@@ -13,12 +12,12 @@ function linksTo($html, $url) {
     return false;
 }
 
-$feed = new Microformat\Localfeed("postindex.json");
+$feed = $site->LocalFeed();
 
-$mentionstore = new JsonStore($config["webmentionFile"]);
+$webmentions = $site->Webmentions();
 
-while (count($mentionstore->value) > 0) {
-    $mention = array_shift($mentionstore->value);
+while (count($webmentions->value) > 0) {
+    $mention = array_shift($webmentions->value);
     $sourceUrl = $mention["source"];
     $targetUrl = $mention["target"];
     echo "Processing $sourceUrl -> $targetUrl\n";
@@ -30,15 +29,15 @@ while (count($mentionstore->value) > 0) {
             echo "\tFound reply\n";
             $targetPost = $feed->getByUrl($targetUrl);
             $targetPost->children[] = $sourcePost;
-            $targetPost->save($config);
+            $site->save($targetPost);
         } else {
             echo "\tNo reply found\n";
         }
     } catch (Exception $e) {
         echo "\tError: " . $e->getMessage() . "\n";
     }
-    $mentionstore->sync();
+    $webmentions->sync();
 }
-$mentionstore->flush();
+$webmentions->flush();
 
 ?>

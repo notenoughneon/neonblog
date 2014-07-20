@@ -1,26 +1,25 @@
 <?php
-require("lib/common.php");
-require("lib/microformat.php");
+require("lib/init.php");
 
 $source = getRequiredPost("source");
 $target = getRequiredPost("target");
 
 try {
-    $feed = new Microformat\Localfeed("postindex.json");
+    $feed = $site->LocalFeed();
     $feed->getByUrl($target);
 } catch (Exception $e) {
     do400("$target isn't a valid target");
 }
 
 try {
-    $mentionstore = new JsonStore($config["webmentionFile"]);
-    if (count($mentionstore->value) >= $config["webmentionLength"]) {
+    $webmentions = $site->Webmentions();
+    if (count($webmentions->value) >= $site->webmentionLength) {
         throw new Exception("Webmention queue is full");
     }
-    $mentionstore->value[] = array(
+    $webmentions->value[] = array(
         "source" => $source,
         "target" => $target);
-    $mentionstore->flush();
+    $webmentions->flush();
     do202();
 } catch (Exception $e) {
     do500($e->getMessage());

@@ -1,19 +1,19 @@
 <?php
-require("lib/common.php");
-require("lib/auth.php");
+require("lib/init.php");
 
 $code = $_GET["code"];
 $me = $_GET["me"];
-$client_id = $config["siteUrl"];
-$redirect_uri = $config["siteUrl"] . "/authcb.php";
+$client_id = $site->url;
+$redirect_uri = $site->url . "/authcb.php";
 $params = array(
     "code" => $code,
     "client_id" => $client_id,
     "redirect_uri" => $redirect_uri
 );
-$auth = indieAuthenticate($params);
-if (isset($auth["me"]) && $auth["me"] === $config["siteUrl"]) {
-    $token = generateToken($config, $client_id, $auth["scope"]);
+$auth = $site->Auth();
+$result = $auth->indieAuthenticate($params);
+if (isset($result["me"]) && $result["me"] === $site->url) {
+    $token = $auth->generateToken($client_id, $result["scope"]);
     setcookie("bearer_token", $token, time() + 60*60*24*365);
     do302("post.php");
 }

@@ -1,20 +1,19 @@
 <?
-require("lib/common.php");
-require("lib/microformat.php");
-require("lib/auth.php");
+require("lib/init.php");
 
+$auth = $site->Auth();
 $token = isset($_COOKIE["bearer_token"]) ? $_COOKIE["bearer_token"] : null;
-requireAuthorization($config, "post", $token);
+$auth->requireAuthorization("post", $token);
 
-$webmentions = new JsonStore($config["webmentionFile"]);
-$feed = new Microformat\Localfeed("postindex.json");
+$webmentions = $site->Webmentions();
+$feed = $site->LocalFeed();
 
 $sourceUrl = getOptionalPost("source");
 $targetUrl = getOptionalPost("target");
 $verb = getOptionalPost("verb");
 
 if ($sourceUrl !== null && $targetUrl !== null) {
-    requireAuthorization($config, "post");
+    $auth->requireAuthorization("post");
 
     $html = fetchPage($sourceUrl);
     $sourcePost = new Microformat\Cite();
@@ -23,7 +22,7 @@ if ($sourceUrl !== null && $targetUrl !== null) {
         if ($sourcePost->isReplyTo($targetUrl)) {
             $targetPost = $feed->getByUrl($targetUrl);
             $targetPost->children[] = $sourcePost;
-            $targetPost->save($config);
+            $site->save($targetPost);
         } else {
             throw new Exception("No reply found");
         }
@@ -38,8 +37,7 @@ if ($sourceUrl !== null && $targetUrl !== null) {
 
 }
 
-$title = "Inbox - " . $config["siteTitle"];
-require("tpl/header.php");
+$site->renderHeader("Inbox");
 ?>
 <h1>Inbox</h1>
 <? foreach ($webmentions->value as $mention) {
@@ -49,10 +47,12 @@ require("tpl/header.php");
     $target = $feed->getByUrl($mention["target"]);
 ?>
         <div class="row">
-            <div><?= $target->toSearchHit("") ?></div>
+            <div>
+<? (new Template($target))->render("tpl/cite-short.php") ?>
+            </div>
             <div>
             <i>Source: <a href="<?= $mention["source"] ?>"><?= truncate($mention["source"], 45) ?></a></i>
-                <?= $source->toHtmlSummary() ?>
+<? (new Template($source))->render("tpl/cite.php") ?>
             </div>
             <div>
                 <form action="inbox.php" method="post">
@@ -66,4 +66,4 @@ require("tpl/header.php");
         </div>
 <? } ?>
 
-<? require("tpl/footer.php") ?>
+<? $site->renderFooter(); ?>

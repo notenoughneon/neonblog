@@ -167,6 +167,7 @@ class LocalFeed extends Feed {
 
 
 class Entry {
+
     public $file = null;
     public $name = null;
     public $published = null;
@@ -197,19 +198,6 @@ class Entry {
         $this->file = $file;
         $mf = \Mf2\parse(file_get_contents($file), $url);
         return $this->loadFromMf(mftype($mf, "h-entry"));
-    }
-
-    public function save($config) {
-        ob_start();
-        $title = truncate($this->name, 45) . " - " . $config["siteTitle"];
-        require("tpl/header.php");
-        echo $this->toHtml();
-        require("tpl/footer.php");
-        $contents = ob_get_contents();
-        ob_end_clean();
-        $fh = fopen($this->file, "w");
-        fwrite($fh, $contents);
-        fclose($fh);
     }
 
     public function loadFromMf($mf) {
@@ -268,53 +256,6 @@ class Entry {
         return $class;
     }
 
-    public function toHtml() {
-        ob_start();
-        require("tpl/entry.php");
-        $html = ob_get_contents();
-        ob_end_clean();
-        return $html;
-    }
-
-    public function highlight($content, $query) {
-        $len = 128;
-        $i = stripos($content, $query);
-        if ($i !== false) {
-            $elided = substr($content, 0, $i)
-                . "<mark>"
-                . substr($content, $i, strlen($query))
-                . "</mark>"
-                . substr($content, $i + strlen($query));
-        } else {
-            $i = 0;
-            $elided = $content;
-        }
-        $start = max($i - $len + strlen($query)/2, 0);
-        $end = $start + 2*$len;
-        $elided = substr($elided, $start, 2*$len);
-        if ($start > 0)
-            $elided = "..." . $elided;
-        if ($end < strlen($content))
-            $elided = $elided . "...";
-        return $elided;
-    }
-
-    public function toSearchHit($query) {
-        ob_start();
-        require("tpl/searchhit.php");
-        $html = ob_get_contents();
-        ob_end_clean();
-        return $html;
-    }
-
-    public function toHtmlSummary() {
-        ob_start();
-        require("tpl/entry-summary.php");
-        $html = ob_get_contents();
-        ob_end_clean();
-        return $html;
-    }
-
     public function references() {
         return array_map(function($e) {return $e->url;},
             array_merge($this->replyTo, $this->repostOf, $this->likeOf));
@@ -351,22 +292,6 @@ class Cite extends Entry {
         foreach ($this->p as $p)
             $class .= " p-$p";
         return $class;
-    }
-
-    public function toHtml() {
-        ob_start();
-        require("tpl/cite.php");
-        $html = ob_get_contents();
-        ob_end_clean();
-        return $html;
-    }
-
-    public function toHtmlSummary() {
-        ob_start();
-        require("tpl/cite-summary.php");
-        $html = ob_get_contents();
-        ob_end_clean();
-        return $html;
     }
 }
 

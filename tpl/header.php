@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><? echo $title ?></title>
+    <title><? echo $pageTitle ?></title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -13,17 +13,17 @@
     <!-- Custom styles for this template -->
     <link href="/css/blog.css" rel="stylesheet">
 
-    <link href="<? echo $config["siteUrl"] . "/webmention.php" ?>" rel="webmention">
+    <link href="<? echo $this->url . "/webmention.php" ?>" rel="webmention">
     <link href="https://indieauth.com/auth" rel="authorization_endpoint">
-    <link href="<? echo $config["siteUrl"] . "/token.php" ?>" rel="token_endpoint">
-    <link href="<? echo $config["siteUrl"] . "/micropub.php" ?>" rel="micropub">
+    <link href="<? echo $this->url . "/token.php" ?>" rel="token_endpoint">
+    <link href="<? echo $this->url . "/micropub.php" ?>" rel="micropub">
   </head>
 
   <body>
 
     <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><? echo $config["siteTitle"] ?></a>
+            <a class="navbar-brand" href="/"><? echo $this->title ?></a>
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
@@ -36,9 +36,9 @@
                 if (empty($_COOKIE["bearer_token"])) {
                 ?>
                 <form class="navbar-form navbar-right" role="form" action="http://indieauth.com/auth" method="get">
-                <input type="hidden" name="me" value="<? echo $config["siteUrl"] ?>" />
-                <input type="hidden" name="client_id" value="<? echo $config["siteUrl"] ?>" />
-                <input type="hidden" name="redirect_uri" value="<? echo $config["siteUrl"] . "/authcb.php" ?>" />
+                <input type="hidden" name="me" value="<? echo $this->url ?>" />
+                <input type="hidden" name="client_id" value="<? echo $this->url ?>" />
+                <input type="hidden" name="redirect_uri" value="<? echo $this->url . "/authcb.php" ?>" />
                 <input type="hidden" name="scope" value="post" />
                     <button type="submit" class="btn">Sign in</button>
                 </form>

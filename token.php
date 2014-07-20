@@ -1,6 +1,5 @@
 <?php
-require("lib/common.php");
-require("lib/auth.php");
+require("lib/init.php");
 
 $code = getRequiredPost("code");
 $me = getRequiredPost("me");
@@ -17,16 +16,17 @@ $params = array(
 );
 
 try {
-    $auth = indieAuthenticate($params);
-    if (empty($auth["me"]) ||
-        $auth["me"] !== $config["siteUrl"])
+    $auth = $site->Auth();
+    $result = $auth->indieAuthenticate($params);
+    if (empty($result["me"]) ||
+        $result["me"] !== $site->url)
         do400("Authentication failed for $me");
-    $token = generateToken($config, $client_id, $auth["scope"]);
+    $token = $auth->generateToken($client_id, $result["scope"]);
     header("Content-Type: application/x-www-form-urlencoded");
     echo formUrlencode(array(
         "access_token" => $token,
         "me" => $me,
-        "scope" => $auth["scope"]));
+        "scope" => $result["scope"]));
 } catch (Exception $e) {
     do500($e->getMessage());
 }

@@ -1,5 +1,5 @@
       <span class="blog-post-syndication">
-<? foreach ($this->syndication as $syndicated) { 
+<? foreach ($e->syndication as $syndicated) {
     if (stripos($syndicated, "twitter.com") !== false)
         $icon = "fa-twitter";
     else if (stripos($syndicated, "facebook.com") !== false)

@@ -3,13 +3,13 @@
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
           <div class="sidebar-module sidebar-module-inset h-card">
             <h4>About</h4>
-            <a class="p-name u-url" href="<? echo $config["siteUrl"] ?>"><? echo $config["authorName"] ?></a>
-            <p class="p-note"><? echo $config["authorBlurb"] ?></p>
+            <a class="p-name u-url" href="<? echo $this->url ?>"><? echo $this->authorName ?></a>
+            <p class="p-note"><? echo $this->authorBlurb ?></p>
           </div>
           <div class="sidebar-module">
             <h4>Elsewhere</h4>
             <ol class="list-unstyled">
-              <? foreach ($config["elsewhere"] as $name => $url) { ?>
+              <? foreach ($this->elsewhere as $name => $url) { ?>
               <li><a href="<? echo $url ?>" rel="me"><? echo $name ?></a></li>
               <? } ?>
             </ol>

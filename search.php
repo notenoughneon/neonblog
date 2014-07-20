@@ -1,17 +1,14 @@
 <?php
-require("lib/common.php");
-require("lib/microformat.php");
+require("lib/init.php");
 
 $q = $_GET["q"];
 
-$title = $config["siteTitle"];
+$site->renderHeader();
 
-require("tpl/header.php");
-
-$feed = new Microformat\Localfeed("postindex.json");
+$feed = $site->LocalFeed();
 foreach ($feed->search($q) as $post) {
-    echo $post->toSearchHit($q);
+    (new Template($post, array("query" => $q)))->render("tpl/entry-search.php");
 }
 
-require("tpl/footer.php");
+$site->renderFooter();
 ?>

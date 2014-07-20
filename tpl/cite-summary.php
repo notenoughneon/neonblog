@@ -1,10 +1,10 @@
 <div class="h-cite">
     <div class="blog-post">
-<? if ($this->isArticle()) { ?>
-        <h2 class="blog-post-title p-name"><? echo $this->name ?></h2>
+<? if ($e->isArticle()) { ?>
+        <h2 class="blog-post-title p-name"><? echo $e->name ?></h2>
 <? } ?>
 <? require("meta.php") ?>
-        <div class="<? echo $this->getContentClass() ?>"><? echo $this->contentValue ?></div>
+        <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentValue ?></div>
     </div>
 </div>
 

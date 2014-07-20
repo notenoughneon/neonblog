@@ -1,9 +1,5 @@
 <?php
-require("lib/common.php");
-require("lib/microformat.php");
-require("lib/auth.php");
-require("lib/webmention.php");
-require("lib/posse.php");
+require("lib/init.php");
 
 function generateSlug($name, $published) {
     $datepart = date("YmdHi", strtotime($published));
@@ -19,17 +15,19 @@ function autoLink($content) {
     return preg_replace("~\b((https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?)\b~i", "<a href=\"$1\">$1</a>", $content);
 }
 
-requireAuthorization($config, "post");
+$auth = $site->Auth();
+
+$site->requireAuthorization("post");
 
 $h = getRequiredPost("h");
 if ($h !== "entry")
     do400("Unsupported object type: '$h'");
 
-$feed = new Microformat\LocalFeed("postindex.json");
+$feed = $site->LocalFeed();
 $post = new Microformat\Entry();
-$post->authorName = $config["authorName"];
-$post->authorPhoto = $config["authorPhoto"];
-$post->authorUrl = $config["siteUrl"];
+$post->authorName = $site->authorName;
+$post->authorPhoto = $site->authorPhoto;
+$post->authorUrl = $site->url;
 $post->name = getOptionalPost("name");
 $content = getOptionalPost("content");
 $post->contentHtml = $content;
@@ -55,9 +53,9 @@ if ($replyto != null) {
     $post->replyTo[] = $replyCite;
 }
 
-$slug = $config["postRoot"] . "/" . generateSlug($post->name, $post->published);
-$post->file = $slug . $config["postExtension"];
-$post->url = $config["siteUrl"] . "/" . $slug;
+$slug = $site->postRoot . "/" . generateSlug($post->name, $post->published);
+$post->file = $slug . $site->postExtension;
+$post->url = $site->url . "/" . $slug;
 
 $photo = getOptionalFile("photo");
 if ($content === null && $photo === null)
@@ -70,17 +68,17 @@ if ($photo !== null) {
 }
 
 try {
-    $post->save($config);
+    $site->save($post);
     $feed->add($post);
     $location = $post->url;
     do201($location);
 
-    Posse\posse($config, $post, getOptionalPost("syndicate-to"));
+    $site->Posse()->posseTo($post, getOptionalPost("syndicate-to"));
 
     foreach ($post->getLinks() as $link) {
         try {
             echo "Sending webmention: $location -&gt; $link<br>";
-            sendmention($location, $link);
+            Webmention::send($location, $link);
             echo "Success<br>";
         } catch (Exception $e) {
             echo "Failed: " . $e->getMessage() . "<br>";

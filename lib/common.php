@@ -1,12 +1,4 @@
 <?php
-ini_set("display_errors", 1);
-require_once("jsonstore.php");
-
-$configstore = new JsonStore("config.json", true);
-$configstore->close();
-$config = $configstore->value;
-if ($config === null)
-    die("Unable to load config.json");
 
 function startsWith($h, $n) {
     return substr($h, 0, strlen($n)) === $n;
@@ -143,6 +135,29 @@ function fetchPage($url) {
     }
     curl_close($ch);
     return $page;
+}
+
+function highlight($content, $query) {
+    $len = 128;
+    $i = stripos($content, $query);
+    if ($i !== false) {
+        $elided = substr($content, 0, $i)
+            . "<mark>"
+            . substr($content, $i, strlen($query))
+            . "</mark>"
+            . substr($content, $i + strlen($query));
+    } else {
+        $i = 0;
+        $elided = $content;
+    }
+    $start = max($i - $len + strlen($query)/2, 0);
+    $end = $start + 2*$len;
+    $elided = substr($elided, $start, 2*$len);
+    if ($start > 0)
+        $elided = "..." . $elided;
+    if ($end < strlen($content))
+        $elided = $elided . "...";
+    return $elided;
 }
 
 ?>

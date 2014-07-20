@@ -1,15 +1,12 @@
 <?php
-require("lib/common.php");
-require("lib/microformat.php");
+require("lib/init.php");
 
 $o = 0;
-$l = $config["postsPerPage"];
+$l = $site->postsPerPage;
 if (isset($_GET["o"])) $o = $_GET["o"];
 if (isset($_GET["l"])) $l = $_GET["l"];
 
-$title = $config["siteTitle"];
-
-require("tpl/header.php");
+$site->renderHeader();
 
 ?>
 
@@ -17,9 +14,9 @@ require("tpl/header.php");
 
 <?
 
-$feed = new Microformat\Localfeed("postindex.json");
+$feed = $site->LocalFeed();
 foreach ($feed->getRange($o, $l) as $post) {
-    echo $post->toHtmlSummary();
+    (new Template($post))->render("tpl/entry-summary.php");
 }
 
 if (($o + $l) >= $feed->count()) $prevUrl = null;
@@ -39,6 +36,5 @@ else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l;
 </div> <!-- /h-feed -->
 
 <?
-
-require("tpl/footer.php");
+$site->renderFooter();
 ?>

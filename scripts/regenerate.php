@@ -1,12 +1,10 @@
 <?
-require("lib/microformat.php");
-require("lib/common.php");
+require("lib/init.php");
 
-
-$feed = new Microformat\Localfeed("postindex.json");
+$feed = $site->LocalFeed();
 foreach ($feed->getAll() as $post) {
     echo "$post->file\n";
-    $post->save($config);
+    $site->save($post);
 }
 
 ?>

@@ -14,7 +14,7 @@ foreach ($e->repostOf as $child) { ?>
         <h2 class="blog-post-title p-name"><? echo $e->name ?></h2>
 <? } ?>
 <? require("meta.php") ?>
-        <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentValue ?></div>
+        <div class="<? echo $e->getContentClass() ?>"><? echo truncate($e->contentValue, 256) ?></div>
     </div>
 </div>
 

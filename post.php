@@ -1,8 +1,7 @@
 <?
-require("lib/common.php");
-$title = "Post - " . $config["siteTitle"];
+require("lib/init.php");
 $token = $_COOKIE["bearer_token"];
-require("tpl/header.php");
+$site->renderHeader("Post");
 ?>
 
             <form class="form-horizontal" enctype="multipart/form-data" action="micropub.php" method="post">
@@ -56,4 +55,4 @@ require("tpl/header.php");
 
             </form>
 
-<? require("tpl/footer.php") ?>
+<? $site->renderFooter(); ?>
