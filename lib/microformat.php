@@ -47,23 +47,35 @@ function mfpath($mf, $path) {
 }
 
 abstract class Feed {
-    public function __construct($indexFile) {
+    public function __construct($site, $indexFile) {
+        $this->site = $site;
         $this->index = new \Jsonstore($indexFile);
     }
 
-    public static function indexDateCmp($a, $b) {
+    protected static function indexDateCmp($a, $b) {
         return $b["date"] - $a["date"];
     }
 
-    public function loadIndexEntry($i) {
+    protected static function loadIndexEntry($i) {
         $e = new Entry();
         $e->loadFromFile($i["file"], $i["url"]);
         return $e;
     }
 
+    protected function addIndexEntry($post) {
+        $this->index->value[] = array(
+            "file" => $post->file,
+            "url" => $post->url,
+            "date" => strtotime($post->published),
+            "type" => $post->getPostType(),
+        );
+    }
+
     public function count() {
         return count($this->index->value);
     }
+
+    public abstract function poll();
 
     public function getRange($offset, $limit) {
         return array_map(array($this,"loadIndexEntry"),
@@ -84,6 +96,11 @@ abstract class Feed {
         );
     }
 
+    public function hasUrl($url) {
+        return array_any($this->index->value,
+        function($e) use($url) { return $e["url"] == $url; });
+    }
+
     public function getByUrl($url) {
         $posts = array_filter($this->index->value,
             function($e) use($url) { return $e["url"] == $url; });
@@ -95,26 +112,40 @@ abstract class Feed {
 }
 
 class RemoteFeed extends Feed {
-    public function reload($cacheRoot, $url) {
-        $html = fetchPage($url);
-        $mf = \Mf2\parse($html, $url);
-        $feed = mftype($mf, "h-feed");
-        if (count($feed) > 0)
-            $elts = mfpath($feed, "children");
-        else
-            $elts = mftype($mf, "h-entry");
-        $this->index->value = array();
-        foreach ($elts as $elt) {
-            $postUrl = mfpath(array($elt), "url/1");
-            $postPublished = mfpath(array($elt), "published/1");
-            $postHtml = fetchPage($postUrl);
-            $file = $cacheRoot . "/" . md5($postUrl);
-            file_put_contents($file, $postHtml);
-            $this->index->value[] = array(
-                "file" => $file,
-                "url" => $postUrl,
-                "date" => strtotime($postPublished),
-            );
+    public function __construct($site, $indexFile, $cacheRoot, $feedUrls) {
+        parent::__construct($site, $indexFile);
+        $this->cacheRoot = $cacheRoot;
+        $this->feedUrls = $feedUrls;
+    }
+
+    private function getNewPosts() {
+        $posts = array();
+        foreach ($this->feedUrls as $feedUrl) {
+            $html = fetchPage($feedUrl);
+            $mf = \Mf2\parse($html, $feedUrl);
+            $feed = mftype($mf, "h-feed");
+            if (count($feed) > 0)
+                $entries = mfpath($feed, "children");
+            else
+                $entries = mftype($mf, "h-entry");
+            foreach ($entries as $entry) {
+                $postUrl = mfpath(array($entry), "url/1");
+                if (!$this->hasUrl($postUrl)) {
+                    $html = fetchPage($postUrl);
+                    $post = new Entry();
+                    $post->loadFromHtml($html, $feedUrl);
+                    $posts[] = $post;
+                }
+            }
+        }
+        return $posts;
+    }
+
+    public function poll() {
+        foreach ($this->getNewPosts() as $post) {
+            $post->file = $this->cacheRoot . "/" . md5($post->url);
+            $this->site->save($post);
+            $this->addIndexEntry($post);
         }
         usort($this->index->value, "parent::indexDateCmp");
         $this->index->sync();
@@ -122,6 +153,11 @@ class RemoteFeed extends Feed {
 }
 
 class LocalFeed extends Feed {
+    public function __construct($site, $indexFile, $pathRegex) {
+        parent::__construct($site, $indexFile);
+        $this->pathRegex = $pathRegex;
+    }
+
     private static function walkDir($path = ".") {
         $paths = array();
         $dir = opendir($path);
@@ -137,28 +173,23 @@ class LocalFeed extends Feed {
         return $paths;
     }
 
-    public function reload($regex) {
+    public function poll() {
         $this->index->value = array();
-        foreach (array_filter($this->walkDir(), function($e) use($regex) {
-            return preg_match($regex, $e); }) as $file) {
+        $pathRegex = $this->pathRegex;
+        foreach (array_filter($this->walkDir(), function($e) use($pathRegex) {
+            return preg_match($pathRegex, $e); }) as $file) {
             $post = new Entry();
             $post->loadFromFile($file);
-            $this->index->value[] = array(
-                "file" => $file,
-                "url" => $post->url,
-                "date" => strtotime($post->published),
-            );
+            if (!$this->hasUrl($post->url)) {
+                $this->addIndexEntry($post);
+            }
         }
         usort($this->index->value, "parent::indexDateCmp");
         $this->index->sync();
     }
 
     public function add($post) {
-        $this->index->value[] = array(
-            "file" => $post->file,
-            "url" => $post->url,
-            "date" => strtotime($post->published),
-        );
+        $this->addIndexEntry($post);
         usort($this->index->value, "parent::indexDateCmp");
         $this->index->sync();
     }
@@ -256,9 +287,39 @@ class Entry {
         return $class;
     }
 
+    public function getPostType() {
+        if ($this->isReply())
+            return "reply";
+        if ($this->isRepost())
+            return "repost";
+        if ($this->isLike())
+            return "like";
+        if ($this->isArticle())
+            return "article";
+        if ($this->isPhoto())
+            return "photo";
+        return "note";
+    }
+
     public function references() {
         return array_map(function($e) {return $e->url;},
             array_merge($this->replyTo, $this->repostOf, $this->likeOf));
+    }
+
+    public function isReply() {
+        return count($this->replyTo) > 0;
+    }
+
+    public function isRepost() {
+        return count($this->repostOf) > 0;
+    }
+
+    public function isLike() {
+        return count($this->likeOf) > 0;
+    }
+
+    public function isPhoto() {
+        return isset($this->photo);
     }
 
     public function isReplyTo($url) {
@@ -278,10 +339,6 @@ class Entry {
         foreach ($doc->getElementsByTagName("a") as $a)
             $links[] = $a->getAttribute("href");
         return $links;
-    }
-
-    public function isPhoto() {
-        return isset($this->photo);
     }
 
 }

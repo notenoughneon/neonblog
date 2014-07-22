@@ -17,8 +17,13 @@ class Site {
         return new Posse($this);
     }
 
+    public function RemoteFeed() {
+        return new Microformat\RemoteFeed($this, $this->feedIndex,
+            $this->feedRoot, $this->following);
+    }
+
     public function LocalFeed() {
-        return new Microformat\LocalFeed($this->localIndex);
+        return new Microformat\LocalFeed($this, $this->localIndex, $this->pathRegex);
     }
 
     public function Webmentions() {
