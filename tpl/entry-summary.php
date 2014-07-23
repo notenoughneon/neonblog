@@ -5,8 +5,8 @@
 <? } ?>
 <? require("meta.php") ?>
         <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentHtml ?></div>
-<?  if (count($e->children) > 0) { ?>
-        <a href="<? echo $e->url ?>"><i class="fa fa-comment"></i> <? echo count($e->children) ?></a>
+<? $count = count($e->children); if ($count > 0) { ?>
+        <a href="<? echo $e->url ?>"><? echo $count . " repl" . ($count > 1 ? "ies" : "y") ?></a>
 <? } ?>
 <? require("syndication.php") ?>
     </div>
