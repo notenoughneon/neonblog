@@ -1,16 +1,6 @@
 <?php
 require("lib/init.php");
 
-function generateSlug($name, $published) {
-    $datepart = date("YmdHi", strtotime($published));
-    if ($name == null)
-        return $datepart;
-    $namepart = strtolower($name);
-    $namepart = preg_replace("/[^a-z0-9 ]+/", "", $namepart);
-    $namepart = preg_replace("/ +/", "-", $namepart);
-    return "$datepart-$namepart";
-}
-
 function autoLink($content) {
     return preg_replace("~\b((https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?)\b~i", "<a href=\"$1\">$1</a>", $content);
 }
@@ -53,7 +43,7 @@ if ($replyto != null) {
     $post->replyTo[] = $replyCite;
 }
 
-$slug = $site->postRoot . "/" . generateSlug($post->name, $post->published);
+$slug = $site->generateSlug($post->name, $post->published);
 $post->file = $slug . $site->postExtension;
 $post->url = $site->url . "/" . $slug;
 

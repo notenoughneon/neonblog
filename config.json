@@ -12,7 +12,7 @@
         "Facebook" : "https://www.facebook.com/emma.kuo.5209",
         "Github" : "https://github.com/notenoughneon",
         "LinkedIn" : "http://www.linkedin.com/pub/emma-kuo/25/15a/586"},
-    "pathRegex" : "#^p/.*\\.html$#",
+    "pathRegex" : "#(^\\d{4}/.*\\.html$)|(^p/.*\\.html$)#",
     "localIndex" : "postindex.json",
     "feedIndex" : "feedindex.json",
     "feedRoot" : "feeds",
@@ -24,9 +24,9 @@
         "https://snarfed.org",
         "https://kylewm.com",
         "http://werd.io",
-        "http://caseorganic.com"
+        "http://caseorganic.com",
+        "http://iamshane.com"
         ],
-    "postRoot" : "p",
     "postExtension" : ".html",
     "postsPerPage" : 10,
     "webmentionFile" : "webmentions.json",

@@ -41,6 +41,24 @@ class Site {
         require("tpl/footer.php");
     }
 
+    public function generateSlug($name, $published) {
+        $datepart = date("Y/n/j", strtotime($published));
+        if ($name != null) {
+            $namepart = strtolower($name);
+            $namepart = preg_replace("/[^a-z0-9 ]+/", "", $namepart);
+            $namepart = preg_replace("/ +/", "-", $namepart);
+            $n = "";
+            while (file_exists("$datepart/$namepart$n" . $this->postExtension))
+                $n = $n == "" ? 1 : $n + 1;
+            return "$datepart/$namepart$n";
+        } else {
+            $n = 1;
+            while (file_exists("$datepart/$n" . $this->postExtension))
+                $n++;
+            return "$datepart/$n";
+        }
+    }
+
     public function save($entry) {
         ob_start();
         $this->renderHeader(truncate($entry->name, 45));
@@ -48,6 +66,7 @@ class Site {
         $this->renderFooter();
         $contents = ob_get_contents();
         ob_end_clean();
+        makeDirs($entry->file);
         $fh = fopen($entry->file, "w");
         fwrite($fh, $contents);
         fclose($fh);
