@@ -12,3 +12,5 @@
     </div>
 </div>
 
+<div class="blog-post-spacer"></div>
+

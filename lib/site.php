@@ -62,7 +62,7 @@ class Site {
     public function save($entry) {
         ob_start();
         $this->renderHeader(truncate($entry->name, 45));
-        (new Template($entry))->render("tpl/entry.php");
+        (new Template($entry, array("site" => $this)))->render("tpl/entry.php");
         $this->renderFooter();
         $contents = ob_get_contents();
         ob_end_clean();
