@@ -18,15 +18,15 @@ Installation
 
 Requirements:
 
-* PHP >= 5.3
+* PHP >= 5.4
 * mod_rewrite
 * PHP-Mf2
 
 All configurable parameters are in `config.json`. At a minimum, you will need to set your site URL and title, your name and photo, and at least one IndieAuth compatible rel-me link.
 
-Neonblog stores posts directly on the filesystem and needs write access to its directory. If you add/remove posts directly on the filesystem, you will need to regenerate the index by running `php -f regenerate.php`.
+Neonblog stores posts directly on the filesystem and needs write access to its directory. If you add/remove posts directly on the filesystem, you will need to reindex by running `php -f scripts/reindex.php`. If you change the templates, you will need to regenerate the static pages by running `php -f scripts/regenerate.php`.
 
-Received webmentions can be accepted on the inbox page. To accept everything automatically, run `php -f processqueue.php` as a cron job.
+Received webmentions can be accepted on the inbox page. To accept everything automatically, run `php -f scripts/processqueue.php` as a cron job.
 
 TODO
 ----
@@ -40,6 +40,7 @@ TODO
   * ~~twitter~~
   * ~~facebook~~
   * soundcloud
+* likes/reposts
 * https support
 * ~~comment approval UI~~
 * ~~search~~
