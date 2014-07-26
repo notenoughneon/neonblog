@@ -7,7 +7,7 @@ function autoLink($content) {
 
 $auth = $site->Auth();
 
-$site->requireAuthorization("post");
+$auth->requireAuthorization("post");
 
 $h = getRequiredPost("h");
 if ($h !== "entry")
