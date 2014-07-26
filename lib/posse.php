@@ -26,7 +26,7 @@ class Posse {
                     echo "POSSEing to $syndicateTo<br>";
                     $url = $this->handlers[$syndicateTo]($post);
                     $post->syndication[] = $url;
-                    $site->save($post);
+                    $this->site->save($post);
                 } catch (Exception $e) {
                     echo "Exception: " . $e->getMessage() . "<br>";
                 }
