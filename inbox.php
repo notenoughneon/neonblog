@@ -19,7 +19,7 @@ if ($sourceUrl !== null && $targetUrl !== null) {
     $sourcePost = new Microformat\Cite();
     $sourcePost->loadFromHtml($html, $sourceUrl);
     if ($verb != "reject") {
-        if ($sourcePost->isReplyTo($targetUrl)) {
+        if ($sourcePost->isReplyTo($targetUrl) || linksTo($html, $targetUrl)) {
             $targetPost = $feed->getByUrl($targetUrl);
             $targetPost->children[] = $sourcePost;
             $site->save($targetPost);

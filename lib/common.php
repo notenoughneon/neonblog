@@ -115,6 +115,17 @@ function do500($msg = "") {
     exit();
 }
 
+function linksTo($html, $url) {
+    $doc = new DOMDocument();
+    if (!@$doc->loadHTML($html))
+        return false;
+    foreach ($doc->getElementsByTagName("a") as $a) {
+        if ($a->getAttribute("href") == $url)
+            return true;
+    }
+    return false;
+}
+
 function fetchPage($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);

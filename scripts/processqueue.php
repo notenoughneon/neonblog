@@ -1,17 +1,6 @@
 <?php
 require("lib/init.php");
 
-function linksTo($html, $url) {
-    $doc = new DOMDocument();
-    if (!@$doc->loadHTML($html))
-        return false;
-    foreach ($doc->getElementsByTagName("a") as $a) {
-        if ($a->getAttribute("href") == $url)
-            return true;
-    }
-    return false;
-}
-
 $feed = $site->LocalFeed();
 
 $webmentions = $site->Webmentions();
@@ -25,7 +14,7 @@ while (count($webmentions->value) > 0) {
         $html = fetchPage($sourceUrl);
         $sourcePost = new Microformat\Cite();
         $sourcePost->loadFromHtml($html, $sourceUrl);
-        if ($sourcePost->isReplyTo($targetUrl)) {
+        if ($sourcePost->isReplyTo($targetUrl) || linksTo($html, $targetUrl)) {
             echo "\tFound reply\n";
             $targetPost = $feed->getByUrl($targetUrl);
             $targetPost->children[] = $sourcePost;
