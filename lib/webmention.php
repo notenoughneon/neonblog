@@ -1,4 +1,6 @@
 <?php
+require_once("Mf2/Parser.php");
+
 class Webmention {
     public static function discoverEndpoint($target) {
         $ch = curl_init();
@@ -16,23 +18,18 @@ class Webmention {
             throw new Exception("Bad http code: $httpcode");
         }
         curl_close($ch);
-        //TODO: check Link header
+        //check Link header
         list($headers, $body) = explode("\r\n\r\n", $response, 2);
-        //array_filter(explode("\r\n", $headers), 
-        //    function($e) { return startsWith($e, "Link: "); });
-
+        if (preg_match("/^Link: <(.*)>; rel=webmention$/m", $headers, $matches) === 1) {
+            return $matches[1];
+        }
         //check <link> and <a> tags
-        $doc = new DOMDocument();
-        if (!@$doc->loadHTML($body))
-            throw new Exception("Failed to parse HTML");
-        foreach (array("link", "a") as $type) {
-            foreach ($doc->getElementsByTagName($type) as $elt) {
-                if (array_any(explode(" ", $elt->getAttribute("rel")),
-                    function($rel) {
-                        return $rel === "webmention" 
-                            || $rel === "http://webmention.org/"; }))
-                    return $elt->getAttribute("href");
-            }
+        $mf = Mf2\Parse($body, $target);
+        if (isset($mf["rels"])) {
+            if (isset($mf["rels"]["webmention"]))
+                return $mf["rels"]["webmention"][0];
+            if (isset($mf["rels"]["http://webmention.org/"]))
+                return $mf["rels"]["http://webmention.org/"][0];
         }
         return false;
     }
