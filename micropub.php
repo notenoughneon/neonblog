@@ -52,6 +52,7 @@ if ($content === null && $photo === null)
     do400("Either content or photo must be set");
 if ($photo !== null) {
     $photoFile = $slug . ".jpg";
+    makeDirs($photoFile);
     if (!move_uploaded_file($photo["tmp_name"], $photoFile))
         throw new Exception("Failed to move upload to $photoFile");
     $post->contentHtml = "<img class=\"u-photo\" src=\"/" . $photoFile . "\">" . $post->contentHtml;
