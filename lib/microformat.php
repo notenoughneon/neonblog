@@ -173,6 +173,12 @@ class LocalFeed extends Feed {
         return $paths;
     }
 
+    protected static function loadIndexEntry($i) {
+        $e = new Entry();
+        $e->loadFromFile($i["file"]);
+        return $e;
+    }
+
     public function poll() {
         $this->index->value = array();
         $pathRegex = $this->pathRegex;
