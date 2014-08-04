@@ -62,6 +62,12 @@ abstract class Feed {
         return $e;
     }
 
+    public static function filterByType($types) {
+        return function($i) use($types) {
+            return in_array($i["type"], $types);
+        };
+    }
+
     protected function addIndexEntry($post) {
         $this->index->value[] = array(
             "file" => $post->file,
@@ -71,15 +77,21 @@ abstract class Feed {
         );
     }
 
-    public function count() {
-        return count($this->index->value);
+    public function count($filter = null) {
+        $elts = $this->index->value;
+        if ($filter != null)
+            $elts = array_values(array_filter($elts, $filter));
+        return count($elts);
     }
 
     public abstract function poll();
 
-    public function getRange($offset, $limit) {
+    public function getRange($offset, $limit, $filter = null) {
+        $elts = $this->index->value;
+        if ($filter != null)
+            $elts = array_values(array_filter($elts, $filter));
         return array_map(array($this,"loadIndexEntry"),
-            array_slice($this->index->value, $offset, $limit));
+            array_slice($elts, $offset, $limit));
     }
 
     public function getAll() {

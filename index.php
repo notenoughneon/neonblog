@@ -3,8 +3,10 @@ require("lib/init.php");
 
 $o = 0;
 $l = $site->postsPerPage;
+$t = "note article photo";
 if (isset($_GET["o"])) $o = $_GET["o"];
 if (isset($_GET["l"])) $l = $_GET["l"];
+if (isset($_GET["t"])) $t = $_GET["t"];
 
 $site->renderHeader();
 
@@ -15,14 +17,15 @@ $site->renderHeader();
 <?
 
 $feed = $site->LocalFeed();
-foreach ($feed->getRange($o, $l) as $post) {
+$filter = Microformat\Feed::filterByType(explode(" ", $t));
+foreach ($feed->getRange($o, $l, $filter) as $post) {
     (new Template($post))->render("tpl/entry-summary.php");
 }
 
-if (($o + $l) >= $feed->count()) $prevUrl = null;
-else $prevUrl = "?o=" . ($o + $l) . "&l=" . $l;
+if (($o + $l) >= $feed->count($filter)) $prevUrl = null;
+else $prevUrl = "?o=" . ($o + $l) . "&l=" . $l . "&t=" . urlencode($t);
 if ($o <= 0) $nextUrl = null;
-else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l;
+else $nextUrl = "?o=" . ($o - $l) . "&l=" . $l . "&t=" . urlencode($t);
 
 ?>
           <ul class="pager">
