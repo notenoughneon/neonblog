@@ -32,6 +32,11 @@
                 </button>
             </div>
             <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/?t=article">Articles</a></li>
+                    <li><a href="/?t=note">Notes</a></li>
+                    <li><a href="/?t=photo">Photos</a></li>
+                </ul>
                 <?
                 if (empty($_COOKIE["bearer_token"])) {
                 ?>
