@@ -1,3 +1,7 @@
+if (new RegExp('^bearer_token=').test(document.cookie)) {
+    $('html').addClass('logged-in');
+}
+
 $("time").each(function() {
     var month = ["Jan","Feb","Mar","Apr","May","Jun",
                  "Jul","Aug","Sep","Oct","Nov","Dec"];

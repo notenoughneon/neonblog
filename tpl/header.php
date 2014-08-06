@@ -37,25 +37,20 @@
                     <li><a href="/?t=note">Notes</a></li>
                     <li><a href="/?t=photo">Photos</a></li>
                 </ul>
-                <?
-                if (empty($_COOKIE["bearer_token"])) {
-                ?>
-                <form class="navbar-form navbar-right" role="form" action="http://indieauth.com/auth" method="get">
+                <form class="if-logged-out navbar-form navbar-right" role="form" action="http://indieauth.com/auth" method="get">
                 <input type="hidden" name="me" value="<? echo $this->url ?>" />
                 <input type="hidden" name="client_id" value="<? echo $this->url ?>" />
                 <input type="hidden" name="redirect_uri" value="<? echo $this->url . "/authcb.php" ?>" />
                 <input type="hidden" name="scope" value="post" />
                     <button type="submit" class="btn">Sign in</button>
                 </form>
-                <? } else { ?>
-                <ul class="nav navbar-nav">
+                <ul class="if-logged-in nav navbar-nav">
                     <li><a href="/inbox.php">Inbox</a></li>
                     <li><a href="/post.php">Post</a></li>
                 </ul>
-                <form class="navbar-form navbar-right" role="form" action="/logout.php" method="post">
+                <form class="if-logged-in navbar-form navbar-right" role="form" action="/logout.php" method="post">
                     <button type="submit" class="btn">Sign out</button>
                 </form>
-                <? } ?>
                 <form class="navbar-form navbar-right" role="search" action="/search.php" method="get">
                     <input type="text" class="form-control" placeholder="Search" name="q">
                 </form>
