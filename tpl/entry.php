@@ -4,13 +4,13 @@ foreach (array_merge($e->replyTo, $e->likeOf, $e->repostOf) as $child) {
     (new Template($child))->render("tpl/cite.php");
 }
 ?>
-    <div class="blog-post-larger">
+    <div class="blog-post">
 <? if ($e->isArticle()) { ?>
         <h2 class="blog-post-title p-name"><? echo $e->name ?></h2>
 <? } ?>
 <? require("meta.php") ?>
         <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentHtml ?></div>
-<? require("syndication.php") ?>
+<? require("actions.php") ?>
     </div>
 
     <form class="form-inline webmention-form" method="post" action="<? echo "$site->url/webmention.php" ?>">

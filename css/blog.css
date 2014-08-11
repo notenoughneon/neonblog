@@ -12,12 +12,18 @@ body {
 .if-logged-in {
     display: none;
 }
+.if-logged-inline {
+    display: none;
+}
 .if-logged-out {
     display: block;
 }
 
 .logged-in .if-logged-in {
     display: block;
+}
+.logged-in .if-logged-inline {
+    display: inline;
 }
 .logged-in .if-logged-out {
     display: none;
@@ -197,7 +203,7 @@ h1 a:hover {
   font-size: 20px;
 }
 .blog-post-spacer {
-  height: 40px;
+  height: 20px;
 }
 .h-cite .blog-post {
   color: #888;
@@ -233,16 +239,23 @@ h1 a:hover {
 }
 .blog-post-meta .p-author {
     font-weight: bold;
-    color: #777;
 }
 
 .blog-post-meta a,
 .blog-post-meta time {
   color: #999;
 }
+.blog-post-bottom {
+    position: relative;
+    clear: left;
+}
+.blog-post-actions a {
+    color: #bbb;
+    margin-right: 20px;
+}
 .blog-post-syndication {
     position: absolute;
-    right: 15px;
+    right: 0px;
 }
 .blog-post-syndication a {
   margin-left: 10px;

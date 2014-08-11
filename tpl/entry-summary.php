@@ -5,10 +5,7 @@
 <? } ?>
 <? require("meta.php") ?>
         <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentHtml ?></div>
-<? $count = count($e->children); if ($count > 0) { ?>
-        <a href="<? echo $e->url ?>"><? echo $count . " repl" . ($count > 1 ? "ies" : "y") ?></a>
-<? } ?>
-<? require("syndication.php") ?>
+<? require("actions.php") ?>
     </div>
 </div>
 
