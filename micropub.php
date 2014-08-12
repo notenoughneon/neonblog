@@ -43,6 +43,22 @@ if ($replyto != null) {
     $post->replyTo[] = $replyCite;
 }
 
+$repostof = getOptionalPost("repost-of");
+if ($repostof != null) {
+    $html = fetchPage($repostof);
+    $repostCite = new Microformat\Cite(array("repost-of"));
+    $repostCite->loadFromHtml($html, $repostof);
+    $post->repostOf[] = $repostCite;
+}
+
+$likeof = getOptionalPost("like-of");
+if ($likeof != null) {
+    $html = fetchPage($likeof);
+    $likeCite = new Microformat\Cite(array("like-of"));
+    $likeCite->loadFromHtml($html, $likeof);
+    $post->likeOf[] = $likeCite;
+}
+
 $slug = $site->generateSlug($post->name, $post->published);
 $post->file = $slug . $site->postExtension;
 $post->url = $site->url . "/" . $slug;

@@ -1,8 +1,8 @@
         <div class="blog-post-bottom">
             <span class="if-logged-inline blog-post-actions">
-                <a href=""><i class="fa fa-reply"></i></a>
-                <a href=""><i class="fa fa-retweet"></i></a>
-                <a href=""><i class="fa fa-star"></i></a>
+                <a href="/post.php?reply-to=<?= urlencode($e->url) ?>"><i class="fa fa-reply"></i></a>
+                <a href="/post.php?repost-of=<?= urlencode($e->url) ?>"><i class="fa fa-retweet"></i></a>
+                <a href="/post.php?like-of=<?= urlencode($e->url) ?>"><i class="fa fa-star"></i></a>
             </span>
             <span class="blog-post-syndication">
 <? foreach ($e->syndication as $syndicated) {

@@ -41,6 +41,12 @@ function getOptionalPost($name) {
     return $_POST[$name];
 }
 
+function getOptionalRequest($name, $default = null) {
+    if (empty($_REQUEST[$name]))
+        return $default;
+    return $_REQUEST[$name];
+}
+
 function getOptionalFile($name) {
     if (empty($_FILES[$name])
         || $_FILES[$name]["error"] !== UPLOAD_ERR_OK)

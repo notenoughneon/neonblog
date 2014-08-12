@@ -1,6 +1,9 @@
 <?
 require("lib/init.php");
 $token = $_COOKIE["bearer_token"];
+$replyto = getOptionalRequest("reply-to", "");
+$repostof = getOptionalRequest("repost-of", "");
+$likeof = getOptionalRequest("like-of", "");
 $site->renderHeader("Post");
 ?>
 
@@ -19,7 +22,21 @@ $site->renderHeader("Post");
                 <div class="form-group">
                     <label for="reply-to" class="col-sm-2 control-label">Reply&nbsp;to:</label>
                     <div class="col-sm-10">
-                        <input id="reply-to" name="in-reply-to" type="text" class="form-control" placeholder="http://example.com/post-id" />
+                        <input id="reply-to" name="in-reply-to" type="text" class="form-control" placeholder="http://example.com/post-id" value="<?= $replyto ?>" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="repost-of" class="col-sm-2 control-label">Repost&nbsp;of:</label>
+                    <div class="col-sm-10">
+                        <input id="repost-of" name="repost-of" type="text" class="form-control" placeholder="http://example.com/post-id" value="<?= $repostof ?>" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="like-of" class="col-sm-2 control-label">Like&nbsp;of:</label>
+                    <div class="col-sm-10">
+                        <input id="like-of" name="like-of" type="text" class="form-control" placeholder="http://example.com/post-id" value="<?= $likeof ?>" />
                     </div>
                 </div>
 
