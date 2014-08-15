@@ -3,7 +3,7 @@ require("lib/init.php");
 
 $o = 0;
 $l = $site->postsPerPage;
-$t = "note article photo";
+$t = "note article photo repost";
 if (isset($_GET["o"])) $o = $_GET["o"];
 if (isset($_GET["l"])) $l = $_GET["l"];
 if (isset($_GET["t"])) $t = $_GET["t"];
@@ -19,7 +19,12 @@ $site->renderHeader();
 $feed = $site->LocalFeed();
 $filter = Microformat\Feed::filterByType(explode(" ", $t));
 foreach ($feed->getRange($o, $l, $filter) as $post) {
-    (new Template($post))->render("tpl/entry-summary.php");
+    if ($post->getPostType() == "like")
+        (new Template($post))->render("tpl/like-summary.php");
+    else if ($post->getPostType() == "repost")
+        (new Template($post))->render("tpl/repost-summary.php");
+    else
+        (new Template($post))->render("tpl/entry-summary.php");
 }
 
 if (($o + $l) >= $feed->count($filter)) $prevUrl = null;

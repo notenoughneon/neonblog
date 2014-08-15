@@ -15,6 +15,7 @@ foreach ($e->repostOf as $child) { ?>
 <? } ?>
 <? require("meta.php") ?>
         <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentValue ?></div>
+<? require("actions.php") ?>
     </div>
 </div>
 
