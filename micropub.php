@@ -67,7 +67,11 @@ $photo = getOptionalFile("photo");
 if ($content === null && $photo === null)
     do400("Either content or photo must be set");
 if ($photo !== null) {
-    $photoFile = $slug . ".jpg";
+    $extension = strtolower(pathinfo($photo["name"], PATHINFO_EXTENSION));
+    // if unknown filetype, assume jpg
+    if (!in_array($extension, array("jpg", "gif", "png")))
+        $extension = "jpg";
+    $photoFile = "$slug.$extension";
     makeDirs($photoFile);
     if (!move_uploaded_file($photo["tmp_name"], $photoFile))
         throw new Exception("Failed to move upload to $photoFile");
