@@ -66,7 +66,7 @@ $site->renderHeader("Post");
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary">Submit</input>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </div>
 
