@@ -4,6 +4,7 @@
                 <a href="/post.php?repost-of=<?= urlencode($e->url) ?>"><i class="fa fa-retweet"></i></a>
                 <a href="/post.php?like-of=<?= urlencode($e->url) ?>"><i class="fa fa-star"></i></a>
             </span>
+            &nbsp;
             <span class="blog-post-syndication">
 <? foreach ($e->syndication as $syndicated) {
     if (stripos($syndicated, "twitter.com") !== false)
