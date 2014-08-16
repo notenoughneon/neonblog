@@ -75,6 +75,15 @@ if ($photo !== null) {
     makeDirs($photoFile);
     if (!move_uploaded_file($photo["tmp_name"], $photoFile))
         throw new Exception("Failed to move upload to $photoFile");
+    // resize photo
+    $img = new Imagick($photoFile);
+    if ($img->getImageWidth() > $site->maxPhotoWidth ||
+        $img->getImageHeight() > $site->maxPhotoHeight) {
+        $img->resizeImage($site->maxPhotoWidth, $site->maxPhotoHeight,
+            imagick::FILTER_LANCZOS, 1, true);
+        $photoFile = "$slug.jpg";
+        $img->writeImage($photoFile);
+    }
     $post->contentHtml = "<img class=\"u-photo\" src=\"/" . $photoFile . "\">" . $post->contentHtml;
 }
 

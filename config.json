@@ -29,6 +29,8 @@
         ],
     "postExtension" : ".html",
     "postsPerPage" : 10,
+    "maxPhotoWidth" : 640,
+    "maxPhotoHeight" : 640,
     "webmentionFile" : "webmentions.json",
     "webmentionLength" : 50,
     "tokenFile" : "tokens.json",
