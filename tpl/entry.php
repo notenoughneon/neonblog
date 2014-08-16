@@ -11,6 +11,7 @@ foreach (array_merge($e->replyTo, $e->likeOf, $e->repostOf) as $child) {
 <? require("meta.php") ?>
         <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentHtml ?></div>
 <? require("actions.php") ?>
+        <a class="if-logged-inline" href="/more.php?u=<?= urlencode($e->url) ?>">more...</a>
     </div>
 
     <form class="form-inline webmention-form" method="post" action="<? echo "$site->url/webmention.php" ?>">

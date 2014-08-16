@@ -9,6 +9,16 @@ class Posse {
 
     }
 
+    public function getAvailableTargets() {
+        return array_keys($this->handlers);
+    }
+
+    public function dummyPosseTo($posseUrl) {
+        return function($post) use ($posseUrl) {
+            return $posseUrl;
+        };
+    }
+
     public function bridgyPosseTo($posseUrl) {
         return function($post) use ($posseUrl) {
                 $response = json_decode(Webmention::send($post->url, $posseUrl));
