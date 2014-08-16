@@ -133,6 +133,7 @@ class RemoteFeed extends Feed {
     private function getNewPosts() {
         $posts = array();
         foreach ($this->feedUrls as $feedUrl) {
+            echo "Polling $feedUrl\n";
             $html = fetchPage($feedUrl);
             $mf = \Mf2\parse($html, $feedUrl);
             $feed = mftype($mf, "h-feed");
@@ -141,14 +142,14 @@ class RemoteFeed extends Feed {
             else
                 $entries = mftype($mf, "h-entry");
             foreach ($entries as $entry) {
-                $postUrl = mfpath(array($entry), "url/1");
-                if (!$this->hasUrl($postUrl)) {
-                    $html = fetchPage($postUrl);
-                    $post = new Entry();
-                    $post->loadFromHtml($html, $feedUrl);
+                $post = new Entry();
+                $post->loadFromMf(array($entry));
+                if ($post->contentValue != null && !$this->hasUrl($post->url)) {
+                    echo "$post->url\n";
                     $posts[] = $post;
                 }
             }
+            echo "\n";
         }
         return $posts;
     }
