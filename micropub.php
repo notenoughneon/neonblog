@@ -84,6 +84,7 @@ if ($photo !== null) {
         $photoFile = "$slug.jpg";
         $img->writeImage($photoFile);
     }
+    $post->photo = $photoFile;
     $post->contentHtml = "<img class=\"u-photo\" src=\"/" . $photoFile . "\">" . $post->contentHtml;
 }
 
