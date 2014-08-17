@@ -215,6 +215,18 @@ class LocalFeed extends Feed {
 
 }
 
+class Card {
+    public $name = null;
+    public $photo = null;
+    public $url = null;
+
+    public function loadFromMf($mf) {
+        $this->name = mfpath($mf, "name/1");
+        $this->photo = mfpath($mf, "photo/1");
+        $this->url = mfpath($mf, "url/1");
+    }
+}
+
 
 class Entry {
 
@@ -225,9 +237,7 @@ class Entry {
     public $contentValue = null;
     public $photo = null;
     public $url = null;
-    public $authorName = null;
-    public $authorPhoto = null;
-    public $authorUrl = null;
+    public $author = null;
     public $syndication = array();
     public $replyTo = array();
     public $likeOf = array();
@@ -257,9 +267,8 @@ class Entry {
         $this->contentValue = mfpath($mf, "content/value/1");
         $this->photo = mfpath($mf, "photo/1");
         $this->url = mfpath($mf, "url/1");
-        $this->authorName = mfpath($mf, "author/name/1");
-        $this->authorPhoto = mfpath($mf, "author/photo/1");
-        $this->authorUrl = mfpath($mf, "author/url/1");
+        $this->author = new Card();
+        $this->author->loadFromMf(mfpath($mf, "author"));
         $this->syndication = mfpath($mf, "syndication");
         foreach (mfpath($mf, "in-reply-to") as $elt) {
             $cite = new Cite(array("in-reply-to"));

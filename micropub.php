@@ -15,9 +15,10 @@ if ($h !== "entry")
 
 $feed = $site->LocalFeed();
 $post = new Microformat\Entry();
-$post->authorName = $site->authorName;
-$post->authorPhoto = $site->authorPhoto;
-$post->authorUrl = $site->url;
+$post->author = new Microformat\Card();
+$post->author->name = $site->authorName;
+$post->author->photo = $site->authorPhoto;
+$post->author->url = $site->url;
 $post->name = getOptionalPost("name");
 $content = getOptionalPost("content");
 $post->contentHtml = $content;
