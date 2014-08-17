@@ -10,7 +10,12 @@ $site->renderHeader();
 
 $feed = $site->RemoteFeed();
 foreach ($feed->getRange($o, $l) as $post) {
-    (new Template($post))->render("tpl/entry-summary.php");
+    if ($post->getPostType() == "like")
+        (new Template($post))->render("tpl/like-summary.php");
+    else if ($post->getPostType() == "repost")
+        (new Template($post))->render("tpl/repost-summary.php");
+    else
+        (new Template($post))->render("tpl/entry-summary.php");
 }
 
 if (($o + $l) >= $feed->count()) $prevUrl = null;

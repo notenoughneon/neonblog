@@ -133,23 +133,34 @@ class RemoteFeed extends Feed {
     private function getNewPosts() {
         $posts = array();
         foreach ($this->feedUrls as $feedUrl) {
-            echo "Polling $feedUrl\n";
-            $html = fetchPage($feedUrl);
-            $mf = \Mf2\parse($html, $feedUrl);
-            $feed = mftype($mf, "h-feed");
-            if (count($feed) > 0)
-                $entries = mfpath($feed, "children");
-            else
-                $entries = mftype($mf, "h-entry");
-            foreach ($entries as $entry) {
-                $post = new Entry();
-                $post->loadFromMf(array($entry));
-                if ($post->contentValue != null && !$this->hasUrl($post->url)) {
-                    echo "$post->url\n";
-                    $posts[] = $post;
+            try {
+                echo "Polling $feedUrl\n";
+                $html = fetchPage($feedUrl);
+                $mf = \Mf2\parse($html, $feedUrl);
+                $feed = mftype($mf, "h-feed");
+                $author = new Card();
+                if (count($feed) > 0) {
+                    $entries = mfpath($feed, "children");
+                    $author->loadFromMf(mfpath($feed, "author"));
+                } else {
+                    $entries = mftype($mf, "h-entry");
+                    $author->loadFromMf(mftype($mf, "h-card"));
                 }
+                foreach ($entries as $entry) {
+                    $post = new Entry();
+                    $post->loadFromMf(array($entry));
+                    if ($post->contentValue != null && !$this->hasUrl($post->url)) {
+                        echo "$post->url\n";
+                        //TODO: improve author resolution
+                        if ($post->author->photo == null && $author->name !== null)
+                            $post->author = $author;
+                        $posts[] = $post;
+                    }
+                }
+                echo "\n";
+            } catch (\Exception $e) {
+                echo "Failed: " . $e->getMessage() . "\n";
             }
-            echo "\n";
         }
         return $posts;
     }
