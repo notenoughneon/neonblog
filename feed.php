@@ -1,5 +1,14 @@
 <?php
 require("lib/init.php");
+$token = $_COOKIE["bearer_token"];
+
+$action = getOptionalPost("action");
+if ($action == "poll") {
+    $site->Auth()->requireAuthorization("post");
+    header("Content-type: text/plain");
+    $site->RemoteFeed()->poll();
+    exit();
+}
 
 $o = 0;
 $l = $site->postsPerPage;
@@ -7,6 +16,12 @@ if (isset($_GET["o"])) $o = $_GET["o"];
 if (isset($_GET["l"])) $l = $_GET["l"];
 
 $site->renderHeader();
+?>
+<form action="feed.php" method="post">
+    <input type="hidden" name="access_token" value="<? echo $token ?>" />
+    <button type="submit" class="btn" name="action" value="poll">Poll</button>
+</form>
+<?
 
 $feed = $site->RemoteFeed();
 foreach ($feed->getRange($o, $l) as $post) {
