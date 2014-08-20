@@ -39,11 +39,11 @@ if ($sourceUrl !== null && $targetUrl !== null) {
 
 $site->renderHeader("Inbox");
 ?>
-<h1>Inbox</h1>
+<h3>Inbox</h3>
 <? foreach ($webmentions->value as $mention) {
     $html = fetchPage($mention["source"]);
     $source = new Microformat\Cite();
-    $source->loadFromHtml($html);
+    $source->loadFromHtml($html, $mention["source"]);
     $target = $feed->getByUrl($mention["target"]);
 ?>
         <div class="row">
@@ -52,7 +52,7 @@ $site->renderHeader("Inbox");
             </div>
             <div>
             <i>Source: <a href="<?= $mention["source"] ?>"><?= truncate($mention["source"], 45) ?></a></i>
-<? (new Template($source))->render("tpl/cite.php") ?>
+<? (new Template($source))->render("tpl/cite-short.php") ?>
             </div>
             <div>
                 <form action="inbox.php" method="post">
