@@ -2,7 +2,18 @@
 require("lib/init.php");
 
 function autoLink($content) {
-    return preg_replace("~\b((https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?)\b~i", "<a href=\"$1\">$1</a>", $content);
+    return preg_replace_callback(
+        "~\b((https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?)\b~i",
+        function ($matches) {
+            $token = $matches[1];
+            if (preg_match("~^https?://~", $token) == 0) {
+                $url = "http://$token";
+            } else {
+                $url = $token;
+            }
+            return "<a href=\"$url\">$token</a>";
+        },
+        $content);
 }
 
 $auth = $site->Auth();
