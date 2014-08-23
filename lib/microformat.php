@@ -1,6 +1,6 @@
 <?php
 namespace Microformat;
-require_once("Mf2/Parser.php");
+require_once("php-mf2/Mf2/Parser.php");
 require_once("lib/jsonstore.php");
 
 function mftype($parsed, $type) {

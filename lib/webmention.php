@@ -1,5 +1,5 @@
 <?php
-require_once("Mf2/Parser.php");
+require_once("php-mf2/Mf2/Parser.php");
 
 class Webmention {
     public static function discoverEndpoint($target) {
