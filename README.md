@@ -6,21 +6,21 @@ Experimental indieweb blogging platform
 Features
 --------
 
-* Post articles, notes, and photos
-* Send and receive replies via webmention
-* POSSE and receive backfeeds from twitter, facebook (via bridgy)
+* Post articles, notes, photos, replies, likes, reposts
+* Send and receive webmentions
+* RelMeAuth based login
 * Micropub endpoint
-* Responsive bootstrap theme
-* No SQL database -- content is stored in html
+* POSSE and receive backfeeds from Twitter and Facebook (via Bridgy)
+* Search
 
 Installation
 ------------
 
 Requirements:
 
-* PHP >= 5.4
-* mod_rewrite
-* PHP-Mf2
+* PHP >= 5.4 (json, curl, openssl, imagick)
+* Apache mod_rewrite
+* write access to the filesystem (CGI/FCGI should work, mod_php may be problematic)
 
 All configurable parameters are in `config.json`. At a minimum, you will need to set your site URL and title, your name and photo, and at least one IndieAuth compatible rel-me link.
 
@@ -40,11 +40,11 @@ TODO
   * ~~twitter~~
   * ~~facebook~~
   * soundcloud
-* likes/reposts
+* autolink photos, soundcloud, youtube players in notes
+* ~~likes/reposts~~
 * https support
 * ~~comment approval UI~~
 * ~~search~~
-* feed reader
 
 License
 -------
