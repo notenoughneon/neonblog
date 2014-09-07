@@ -380,6 +380,33 @@ class Entry {
         return $links;
     }
 
+    private static function autoLink($content) {
+        return preg_replace_callback(
+            "~\b((https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?)\b~i",
+            function ($matches) {
+                $token = $matches[1];
+                if (preg_match("~^https?://~", $token) == 0) {
+                    $url = "http://$token";
+                } else {
+                    $url = $token;
+                }
+                return "<a href=\"$url\">$token</a>";
+            },
+            $content);
+    }
+
+    public function setNoteContent($content) {
+        $this->contentHtml = $this->autoLink($content);
+        foreach ($this->getLinks() as $link) {
+            try {
+                $embed = (new \OEmbed())->resolve($link);
+                if ($embed != null)
+                    $this->contentHtml .= "\n$embed";
+            } catch (\Exception $e) {
+                echo "Failed: " . $e->getMessage() . "\n";
+            }
+        }
+    }
 }
 
 class Cite extends Entry {

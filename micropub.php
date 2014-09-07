@@ -1,21 +1,6 @@
 <?php
 require("lib/init.php");
 
-function autoLink($content) {
-    return preg_replace_callback(
-        "~\b((https?://)?[\w-]*[a-z][\w-]*(\.[\w-]+)+(/[\w\./%+?=&#\~-]+)?)\b~i",
-        function ($matches) {
-            $token = $matches[1];
-            if (preg_match("~^https?://~", $token) == 0) {
-                $url = "http://$token";
-            } else {
-                $url = $token;
-            }
-            return "<a href=\"$url\">$token</a>";
-        },
-        $content);
-}
-
 $auth = $site->Auth();
 
 $auth->requireAuthorization("post");
@@ -34,7 +19,7 @@ $post->name = getOptionalPost("name");
 $content = getOptionalPost("content");
 $post->contentHtml = $content;
 if ($content !== null && $post->name == null)
-    $post->contentHtml = autolink(htmlspecialchars($post->contentHtml));
+    $post->setNoteContent(htmlspecialchars($post->contentHtml));
 $post->published = getOptionalPost("published");
 if ($post->published === null)
     $post->published = date("c");
