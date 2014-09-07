@@ -11,6 +11,7 @@ Features
 * RelMeAuth based login
 * Micropub endpoint
 * POSSE and receive backfeeds from Twitter and Facebook (via Bridgy)
+* oEmbed (Youtube and Soundcloud)
 * Search
 
 Installation
@@ -40,7 +41,7 @@ TODO
   * ~~twitter~~
   * ~~facebook~~
   * soundcloud
-* autolink photos, soundcloud, youtube players in notes
+* ~~autolink photos, soundcloud, youtube players in notes~~
 * ~~likes/reposts~~
 * https support
 * ~~comment approval UI~~
