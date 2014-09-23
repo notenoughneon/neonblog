@@ -4,6 +4,8 @@ class OEmbed {
         $this->handlers = array(
             "~^https?://(www\.)?youtube\.com/~i" =>
                 $this->oEmbedHandler("http://www.youtube.com/oembed"),
+            "~^https?://(www\.)?instagram\.com/~i" =>
+                $this->oEmbedHandler("http://api.instagram.com/oembed"),
             "~^https?://(www\.)?soundcloud\.com/~i" =>
                 $this->oEmbedHandler("http://soundcloud.com/oembed",
                     array("maxheight" => "166")),
@@ -44,9 +46,13 @@ class OEmbed {
             }
             curl_close($ch);
             $response = json_decode($page);
-            if (empty($response->html))
+            if (isset($response->html))
+                return $response->html;
+            else if (isset($response->url) &&
+                preg_match("~\.(jpg|jpeg|gif|png)$~i", $response->url) === 1)
+                return "<img src=\"$response->url\" />";
+            else
                 throw new Exception("Bad oembed response: $page");
-            return $response->html;
         };
     }
 
