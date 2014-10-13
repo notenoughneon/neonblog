@@ -3,7 +3,10 @@
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
           <div class="sidebar-module sidebar-module-inset h-card">
             <h4>About</h4>
-            <a class="p-name u-url" href="<? echo $this->url ?>"><? echo $this->authorName ?></a>
+            <img src="<? echo $this->authorPhoto ?>">
+            <a class="p-name u-url" href="<? echo $this->url ?>">
+                <? echo $this->authorName ?>
+            </a>
             <p class="p-note"><? echo $this->authorBlurb ?></p>
           </div>
           <div class="sidebar-module">

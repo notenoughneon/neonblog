@@ -4,11 +4,11 @@ foreach (array_merge($e->replyTo, $e->likeOf, $e->repostOf) as $child) {
     (new Template($child))->render("tpl/cite.php");
 }
 ?>
-    <div class="blog-post">
+    <div class="blog-post-larger">
 <? if ($e->isArticle()) { ?>
         <h2 class="blog-post-title p-name"><? echo $e->name ?></h2>
 <? } ?>
-<? require("meta.php") ?>
+<? $hideAuthor = true; require("meta.php") ?>
         <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentHtml ?></div>
 <? require("actions.php") ?>
         <a class="if-logged-inline" href="/more.php?u=<?= urlencode($e->url) ?>">more...</a>
