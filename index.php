@@ -23,6 +23,8 @@ foreach ($feed->getRange($o, $l, $filter) as $post) {
         (new Template($post, array("hideAuthor" => true)))->render("tpl/like-summary.php");
     else if ($post->getPostType() == "repost")
         (new Template($post, array("hideAuthor" => true)))->render("tpl/repost-summary.php");
+    else if ($post->getPostType() == "reply")
+        (new Template($post, array("hideAuthor" => true)))->render("tpl/reply-summary.php");
     else
         (new Template($post, array("hideAuthor" => true)))->render("tpl/entry-summary.php");
 }

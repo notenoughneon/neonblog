@@ -29,6 +29,8 @@ foreach ($feed->getRange($o, $l) as $post) {
         (new Template($post))->render("tpl/like-summary.php");
     else if ($post->getPostType() == "repost")
         (new Template($post))->render("tpl/repost-summary.php");
+    else if ($post->getPostType() == "reply")
+        (new Template($post))->render("tpl/reply-summary.php");
     else
         (new Template($post))->render("tpl/entry-summary.php");
 }
