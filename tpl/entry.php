@@ -8,7 +8,7 @@ foreach (array_merge($e->replyTo, $e->likeOf, $e->repostOf) as $child) {
 <? if ($e->isArticle()) { ?>
         <h2 class="blog-post-title p-name"><? echo $e->name ?></h2>
 <? } ?>
-<? $hideAuthor = true; require("meta.php") ?>
+<? require("meta.php") ?>
         <div class="<? echo $e->getContentClass() ?>"><? echo $e->contentHtml ?></div>
 <? require("actions.php") ?>
         <a class="if-logged-inline" href="/more.php?u=<?= urlencode($e->url) ?>">more...</a>

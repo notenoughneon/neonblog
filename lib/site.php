@@ -62,8 +62,24 @@ class Site {
     public function save($entry) {
         ob_start();
         $this->renderHeader(truncate($entry->name, 45));
-        (new Template($entry, array("site" => $this)))->render("tpl/entry.php");
+        (new Template($entry, array("site" => $this, "hideAuthor" => true)))->render("tpl/entry.php");
         $this->renderFooter();
+        $contents = ob_get_contents();
+        ob_end_clean();
+        makeDirs($entry->file);
+        $fh = fopen($entry->file, "w");
+        fwrite($fh, $contents);
+        fclose($fh);
+    }
+
+    public function saveFeedEntry($entry) {
+        ob_start();
+        echo "<!DOCTYPE html>\n";
+        echo "<html>\n";
+        echo "<body>\n";
+        (new Template($entry, array("site" => $this)))->render("tpl/entry.php");
+        echo "</body>\n";
+        echo "</html>\n";
         $contents = ob_get_contents();
         ob_end_clean();
         makeDirs($entry->file);

@@ -168,7 +168,7 @@ class RemoteFeed extends Feed {
     public function poll() {
         foreach ($this->getNewPosts() as $post) {
             $post->file = $this->cacheRoot . "/" . md5($post->url);
-            $this->site->save($post);
+            $this->site->saveFeedEntry($post);
             $this->addIndexEntry($post);
         }
         usort($this->index->value, "parent::indexDateCmp");
