@@ -20,11 +20,11 @@ $feed = $site->LocalFeed();
 $filter = Microformat\Feed::filterByType(explode(" ", $t));
 foreach ($feed->getRange($o, $l, $filter) as $post) {
     if ($post->getPostType() == "like")
-        (new Template($post))->render("tpl/like-summary.php");
+        (new Template($post, array("hideAuthor" => true)))->render("tpl/like-summary.php");
     else if ($post->getPostType() == "repost")
-        (new Template($post))->render("tpl/repost-summary.php");
+        (new Template($post, array("hideAuthor" => true)))->render("tpl/repost-summary.php");
     else
-        (new Template($post))->render("tpl/entry-summary.php");
+        (new Template($post, array("hideAuthor" => true)))->render("tpl/entry-summary.php");
 }
 
 if (($o + $l) >= $feed->count($filter)) $prevUrl = null;

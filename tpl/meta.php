@@ -1,12 +1,13 @@
+<? $showAuthor = empty($hideAuthor) || !$hideAuthor; ?>
         <p class="blog-post-meta">
             <a class="p-author h-card" href="<? echo $e->author->url ?>">
-<? if (empty($hideAuthor)) { ?>
+<? if ($showAuthor) { ?>
                 <img src="<? echo $e->author->photo ?>">
                 <? echo $e->author->name ?>
 <? } ?>
             </a>
 <? if (isset($e->published)) { ?>
-<? if (empty($hideAuthor)) { ?>
+<? if ($showAuthor) { ?>
             -
 <? } ?>
             <a class="u-url" href="<? echo $e->url ?>">
