@@ -1,13 +1,15 @@
         </div><!-- /.blog-main -->
 
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-          <div class="sidebar-module sidebar-module-inset h-card">
+          <div class="sidebar-module sidebar-module-inset">
             <h4>About</h4>
-            <img src="<? echo $this->authorPhoto ?>">
-            <a class="p-name u-url" href="<? echo $this->url ?>">
-                <? echo $this->authorName ?>
-            </a>
-            <p class="p-note"><? echo $this->authorBlurb ?></p>
+            <div class="h-card">
+                <img src="<? echo $this->authorPhoto ?>">
+                <a class="p-name u-url" rel="me" href="<? echo $this->url ?>">
+                    <? echo $this->authorName ?>
+                </a>
+                <p class="p-note"><? echo $this->authorBlurb ?></p>
+            </div>
           </div>
           <div class="sidebar-module">
             <h4>Elsewhere</h4>
