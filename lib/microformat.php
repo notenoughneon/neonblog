@@ -3,10 +3,25 @@ namespace Microformat;
 require_once("php-mf2/Mf2/Parser.php");
 require_once("lib/jsonstore.php");
 
-function mftype($parsed, $type) {
-    return array_filter($parsed["items"], function($elt) use ($type) {
-        return in_array($type, $elt["type"]);
-    });
+function ismf($elt) {
+    return is_array($elt)
+        && array_key_exists("type", $elt)
+        && array_key_exists("properties", $elt);
+}
+
+function mftype($items, $type, $recursive = false) {
+    $results = array();
+    foreach ($items as $item) {
+        if (ismf($item) && in_array($type, $item["type"]))
+            $results[] = $item;
+        if ($recursive && ismf($item)) {
+            foreach ($item["properties"] as $proplist)
+                $results = array_merge($results, mftype($proplist, $type, true));
+            if (array_key_exists("children", $item))
+                $results = array_merge($results, mftype($item["children"], $type, true));
+        }
+    }
+    return $results;
 }
 
 function scrubstrings($arr) {
@@ -44,6 +59,41 @@ function mfpath($mf, $path) {
     return array_reduce($elts, function($result, $elt) {
         return mfprop($result, $elt);
     }, $mf);
+}
+
+function getRepHCard($mf, $pageUrl) {
+    $hcards = mftype($mf["items"], "h-card", true);
+
+    // 1. uid and url match page url
+    foreach ($hcards as $hcard) {
+        $hcard = array($hcard);
+        $url = mfpath($hcard, "url/1");
+        $uid = mfpath($hcard, "uid/1");
+        if (urlsEqual($url, $pageUrl) && urlsEqual($uid, $pageUrl))
+            return $hcard;
+    }
+
+    // 2. url has rel=me
+    if (isset($mf["rels"]) && isset($mf["rels"]["me"])) {
+        $relsme = $mf["rels"]["me"];
+        foreach ($hcards as $hcard) {
+            $hcard = array($hcard);
+            $url = mfpath($hcard, "url/1");
+            if (array_any($relsme, function($rel) use($url) {
+                return urlsEqual($url, $rel);
+            }))
+                return $hcard;
+        }
+    }
+
+    // 3. is only hcard, url matches page url
+    if (count($hcards) === 1) {
+        $url = mfpath($hcards, "url/1");
+        if (urlsEqual($url, $pageUrl))
+            return $hcards;
+    }
+
+    return array();
 }
 
 abstract class Feed {
@@ -137,23 +187,18 @@ class RemoteFeed extends Feed {
                 echo "Polling $feedUrl\n";
                 $html = fetchPage($feedUrl);
                 $mf = \Mf2\parse($html, $feedUrl);
-                $feed = mftype($mf, "h-feed");
-                $author = new Card();
+                $repHCard = getRepHCard($mf, $feedUrl);
+                $feed = mftype($mf["items"], "h-feed", true);
                 if (count($feed) > 0) {
                     $entries = mfpath($feed, "children");
-                    $author->loadFromMf(mfpath($feed, "author"));
                 } else {
-                    $entries = mftype($mf, "h-entry");
-                    $author->loadFromMf(mftype($mf, "h-card"));
+                    $entries = mftype($mf["items"], "h-entry");
                 }
                 foreach ($entries as $entry) {
                     $post = new Entry();
-                    $post->loadFromMf(array($entry));
+                    $post->loadFromMf(array($entry), $repHCard);
                     if ($post->contentValue != null && !$this->hasUrl($post->url)) {
                         echo "$post->url\n";
-                        //TODO: improve author resolution
-                        if ($post->author->photo == null && $author->name !== null)
-                            $post->author = $author;
                         $posts[] = $post;
                     }
                 }
@@ -262,16 +307,16 @@ class Entry {
 
     public function loadFromHtml($html, $url = null) {
         $mf = \Mf2\parse($html, $url);
-        return $this->loadFromMf(mftype($mf, "h-entry"));
+        return $this->loadFromMf(mftype($mf["items"], "h-entry"), getRepHCard($mf, $url));
     }
 
     public function loadFromFile($file, $url = null) {
         $this->file = $file;
         $mf = \Mf2\parse(file_get_contents($file), $url);
-        return $this->loadFromMf(mftype($mf, "h-entry"));
+        return $this->loadFromMf(mftype($mf["items"], "h-entry"), getRepHCard($mf, $url));
     }
 
-    public function loadFromMf($mf) {
+    public function loadFromMf($mf, $repHCard = array()) {
         $this->name = mfpath($mf, "name/1");
         $this->published = mfpath($mf, "published/1");
         $this->contentHtml = mfpath($mf, "content/html/1");
@@ -279,7 +324,7 @@ class Entry {
         $this->photo = mfpath($mf, "photo/1");
         $this->url = mfpath($mf, "url/1");
         $this->author = new Card();
-        $this->author->loadFromMf(mfpath($mf, "author"));
+        $this->author->loadFromMf(array_merge(mfpath($mf, "author"), $repHCard));
         $this->syndication = mfpath($mf, "syndication");
         foreach (mfpath($mf, "in-reply-to") as $elt) {
             $cite = new Cite(array("in-reply-to"));

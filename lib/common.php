@@ -132,6 +132,22 @@ function linksTo($html, $url) {
     return false;
 }
 
+function urlsEqual($u1, $u2) {
+    $parts = array(PHP_URL_HOST, PHP_URL_PATH);
+    foreach ($parts as $part) {
+        $p1 = parse_url($u1, $part);
+        $p2 = parse_url($u2, $part);
+        //normalize trailing slash
+        if ($part == PHP_URL_PATH) {
+            if ($p1 == null) $p1 = "/";
+            if ($p2 == null) $p2 = "/";
+        }
+        if ($p1 !== $p2)
+            return false;
+    }
+    return true;
+}
+
 function fetchPage($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
