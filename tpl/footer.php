@@ -4,7 +4,7 @@
           <div class="sidebar-module sidebar-module-inset">
             <h4>About</h4>
             <div class="h-card">
-                <img src="<? echo $this->authorPhoto ?>">
+                <img class="u-photo" src="<? echo $this->authorPhoto ?>">
                 <a class="p-name u-url" rel="me" href="<? echo $this->url ?>">
                     <? echo $this->authorName ?>
                 </a>
