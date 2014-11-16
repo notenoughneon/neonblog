@@ -37,6 +37,8 @@ if ($replyto != null) {
     $html = fetchPage($replyto);
     $replyCite = new Microformat\Cite(array("in-reply-to"));
     $replyCite->loadFromHtml($html, $replyto);
+    //force url for targets that have missing or incorrect u-url property
+    $replyCite->url = $replyto;
     $post->replyTo[] = $replyCite;
 }
 
