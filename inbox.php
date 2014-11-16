@@ -45,14 +45,12 @@ $site->renderHeader("Inbox");
     $source = new Microformat\Cite();
     $source->loadFromHtml($html, $mention["source"]);
     $target = $feed->getByUrl($mention["target"]);
+    $source->replyTo = array($target);
 ?>
         <div class="row">
             <div>
-<? (new Template($target))->render("tpl/cite-short.php") ?>
-            </div>
-            <div>
             <i>Source: <a href="<?= $mention["source"] ?>"><?= truncate($mention["source"], 45) ?></a></i>
-<? (new Template($source))->render("tpl/cite-short.php") ?>
+<? (new Template($source))->render("tpl/reply-summary.php") ?>
             </div>
             <div>
                 <form action="inbox.php" method="post">
