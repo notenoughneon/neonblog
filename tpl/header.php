@@ -47,6 +47,7 @@
                 <ul class="if-logged-in nav navbar-nav">
                     <li><a href="/inbox.php">Inbox</a></li>
                     <li><a href="/post.php">Post</a></li>
+                    <li><a href="/feed.php">Reader</a></li>
                 </ul>
                 <form class="if-logged-in navbar-form navbar-right" role="form" action="/logout.php" method="post">
                     <button type="submit" class="btn">Sign out</button>
