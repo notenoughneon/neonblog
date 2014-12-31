@@ -6,13 +6,13 @@
                 <? echo $e->author->name ?>
             </a>
 <? } ?>
-<? if (isset($e->published)) { ?>
-<? if ($showAuthor) { ?>
+<? if ($showAuthor && isset($e->published)) { ?>
             -
 <? } ?>
             <a class="u-url" href="<? echo $e->url ?>">
+<? if (isset($e->published)) { ?>
                 <time class="dt-published" datetime="<? echo $e->published ?>" title="<? echo date("j M Y g:i a", strtotime($e->published)) ?>"><? echo date("j M Y g:i a", strtotime($e->published)) ?></time>
+<? } else { echo $e->url; } ?>
             </a>
-<? } ?>
         </p>
 
