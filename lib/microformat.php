@@ -197,7 +197,7 @@ class RemoteFeed extends Feed {
                 foreach ($entries as $entry) {
                     $post = new Entry();
                     $post->loadFromMf(array($entry), $repHCard);
-                    if ($post->contentValue != null && !$this->hasUrl($post->url)) {
+                    if ($post->name != null && !$this->hasUrl($post->url)) {
                         echo "$post->url\n";
                         $posts[] = $post;
                     }
