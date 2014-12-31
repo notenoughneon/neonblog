@@ -30,6 +30,9 @@ class Posse {
 
     public function posseTo($post, $syndicateTos) {
         if ($syndicateTos === null) return;
+        // if not already an array, assume comma delimited list
+        if (!is_array($syndicateTos))
+            $syndicateTos = explode(",", $syndicateTos);
         foreach ($syndicateTos as $syndicateTo) {
             if (array_key_exists($syndicateTo, $this->handlers)) {
                 try {

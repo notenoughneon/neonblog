@@ -5,6 +5,16 @@ $auth = $site->Auth();
 
 $auth->requireAuthorization("post");
 
+$q = getOptionalRequest("q");
+if ($q == "syndicate-to") {
+    $posse = $site->Posse();
+    header("Content-Type: application/x-www-form-urlencoded");
+    echo formUrlencode(array(
+        "syndicate-to" => implode(",", array_keys($posse->handlers))
+        ));
+    exit();
+}
+
 $h = getRequiredPost("h");
 if ($h !== "entry")
     do400("Unsupported object type: '$h'");
