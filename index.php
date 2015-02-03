@@ -3,7 +3,7 @@ require("lib/init.php");
 
 $o = 0;
 $l = $site->postsPerPage;
-$t = "note article photo repost";
+$t = "note article photo repost reply";
 if (isset($_GET["o"])) $o = $_GET["o"];
 if (isset($_GET["l"])) $l = $_GET["l"];
 if (isset($_GET["t"])) $t = $_GET["t"];
