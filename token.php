@@ -5,9 +5,7 @@ $code = getRequiredPost("code");
 $me = getRequiredPost("me");
 $redirect_uri = getRequiredPost("redirect_uri");
 $client_id = getRequiredPost("client_id");
-$state = getOptionalPost("state");
-if ($state == null)
-    $state = "";
+$state = getRequiredPost("state");
 
 $params = array(
     "code" => $code,
