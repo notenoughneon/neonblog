@@ -1,7 +1,7 @@
 <div class="h-entry">
 <? foreach ($e->replyTo as $child) { ?>
     <i class="fa fa-reply"></i>
-    In reply to <a href="<?= $child->url ?>" class="p-in-reply-to"><?= truncate($child->name, 70) ?></a>
+    In reply to <a href="<?= $child->url ?>" class="u-in-reply-to"><?= truncate($child->name, 70) ?></a>
 <? } ?>
     <div class="blog-post">
 <? if ($e->isArticle()) { ?>
