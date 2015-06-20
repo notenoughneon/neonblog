@@ -2,6 +2,8 @@
 class OEmbed {
     public function __construct() {
         $this->handlers = array(
+            "~^https?://(www\.)?youtu\.be/~i" =>
+                $this->oEmbedHandler("http://www.youtube.com/oembed"),
             "~^https?://(www\.)?youtube\.com/~i" =>
                 $this->oEmbedHandler("http://www.youtube.com/oembed"),
             "~^https?://(www\.)?instagram\.com/~i" =>
